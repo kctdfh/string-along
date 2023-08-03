@@ -1,0 +1,13 @@
+{
+  "name": "Import Export String Variables",
+  "id": "1225498390710809905",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "permissions": [],
+  "main": "code.js",
+  "menu": [
+    { "command": "import", "name": "Import String Variables CSV" },
+    { "command": "export", "name": "Export String Variables CSV" }
+  ],
+  "ui": { "import": "./dist/import.html", "export": "./dist/export.html" }
+}

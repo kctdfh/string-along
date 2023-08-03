@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="/src/css/import.css" />
+<link rel="stylesheet" href="/src/css/main.css" />
+
+<form>
+  <textarea required placeholder="Variables"></textarea>
+  <button id="JSON" type="submit" class="hidden">Import JSON</button>
+  <button id="CSV" type="submit">Update Variables from CSV</button>
+</form>
+
+<script>
+  document.querySelector("form").addEventListener("submit", (e) => {
+    // if the button that was pressed has the ID of "json"
+    let submitter = e.submitter.id;
+    const body = document.querySelector("textarea").value.trim();
+    e.preventDefault();
+    if (submitter === "JSON") {
+      if (isValidJSON(body)) {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              body,
+              type: "IMPORT",
+              submitter: submitter,
+            },
+          },
+          "*"
+        );
+      } else {
+        alert("Invalid JSON");
+      }
+    } else if (submitter === "CSV") {
+      if (isValidCSV(body)) {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              body,
+              type: "IMPORT",
+              submitter: submitter,
+            },
+          },
+          "*"
+        );
+      } else {
+        alert("Invalid CSV");
+      }
+    }
+  });
+
+  function isValidJSON(body) {
+    try {
+      JSON.parse(body);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function isValidCSV(body) {
+    try {
+      let csv = body.split("\n");
+      let headers = csv[0].split(",");
+      let rows = csv.slice(1);
+      if (headers.length < 2) {
+        return false;
+      }
+      for (let i = 0; i < rows.length; i++) {
+        let row = rows[i].split(",");
+        if (row.length !== headers.length) {
+          return false;
+        }
+      }
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+</script>

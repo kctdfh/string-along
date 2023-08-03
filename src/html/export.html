@@ -1,0 +1,88 @@
+<link rel="stylesheet" href="/src/css/export.css" />
+<link rel="stylesheet" href="/src/css/main.css" />
+<main>
+  <form>
+    <div class="row">
+      <select id="collectionSelect"></select>
+    </div>
+    <div class="row">
+      <button id="JSON" type="button" class="click hidden">
+        Export Variables to JSON
+      </button>
+      <button id="CSV" type="button" class="click">
+        Export Variables to CSV
+      </button>
+    </div>
+  </form>
+  <textarea
+    placeholder="Exported variables will render here..."
+    readonly
+  ></textarea>
+  <div class="row">
+    <button id="copy" type="button" class="hidden">Copy</button>
+  </div>
+</main>
+<script>
+  window.onmessage = ({ data: { pluginMessage } }) => {
+    if (pluginMessage.type === "EXPORT_RESULT") {
+      const result = pluginMessage.result;
+      let printedResult;
+      let validResult = false;
+      if (
+        pluginMessage.fileType === "JSON" &&
+        JSON.parse(result).length === 0
+      ) {
+        printedResult = "No variables to export";
+      } else if (pluginMessage.fileType === "CSV") {
+        const row = result.split("\n");
+        if (row.length <= 1) {
+          printedResult = "No variables to export";
+        } else {
+          printedResult = result;
+          validResult = true;
+        }
+      } else {
+        printedResult = result;
+        validResult = true;
+      }
+      document.querySelector("textarea").innerHTML = printedResult;
+      if (validResult) {
+        document.querySelector("#copy").classList.remove("hidden");
+      }
+    } else if (pluginMessage.type === "GET_COLLECTIONS") {
+      console.log("GET_COLLECTIONS");
+      const select = document.querySelector("#collectionSelect");
+      pluginMessage.result.forEach((collection) => {
+        const option = document.createElement("option");
+        option.value = collection.id;
+        console.log(collection.id);
+        option.innerHTML = collection.name;
+        console.log(collection.name);
+        select.appendChild(option);
+      });
+    }
+  };
+  //
+  document.querySelector("#copy").onclick = function () {
+    document.querySelector("textarea").select();
+    document.execCommand("copy");
+    alert("Copied to clipboard");
+  };
+  //
+  const clickable = document.querySelectorAll(".click");
+  function postExportMessage(e) {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "EXPORT",
+          submitter: e.target.id,
+          collectionId: document.querySelector("#collectionSelect").value,
+        },
+      },
+      "*"
+    );
+  }
+  Array.from(clickable).forEach(function (button) {
+    button.addEventListener("click", postExportMessage);
+  });
+</script>

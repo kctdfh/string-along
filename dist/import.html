@@ -1,0 +1,160 @@
+<style>
+:root {
+  --spacing: 0.8rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--figma-color-bg);
+  color: var(--figma-color-text);
+  margin: 0;
+  padding: var(--spacing);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  height: 100%;
+}
+
+button {
+  appearance: none;
+  border-radius: 4px;
+  padding: var(--spacing);
+}
+
+select,
+input,
+textarea {
+  font-family: Andale Mono, monospace;
+  font-size: 0.9rem;
+  padding: var(--spacing);
+}
+
+textarea {
+  flex: 1;
+  white-space: pre;
+}
+
+form > * {
+  display: block;
+  width: 100%;
+}
+
+button {
+  background-color: var(--figma-color-bg-brand);
+  border: none;
+  color: var(--figma-color-text-onbrand);
+  font-family: system-ui;
+  font-weight: 600;
+}
+
+select,
+input,
+textarea {
+  background-color: var(--figma-color-bg-secondary);
+  color: var(--figma-color-text-secondary);
+  border: 2px solid var(--figma-color-border);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--figma-color-border-selected);
+  outline: none;
+}
+
+select,
+input {
+  flex: 1;
+}
+	</style>
+<style>
+.hidden {
+  display: none !important;
+}
+	</style>
+
+<form>
+  <textarea required placeholder="Variables"></textarea>
+  <button id="JSON" type="submit" class="hidden">Import JSON</button>
+  <button id="CSV" type="submit">Update Variables from CSV</button>
+</form>
+
+<script>
+  document.querySelector("form").addEventListener("submit", (e) => {
+    // if the button that was pressed has the ID of "json"
+    let submitter = e.submitter.id;
+    const body = document.querySelector("textarea").value.trim();
+    e.preventDefault();
+    if (submitter === "JSON") {
+      if (isValidJSON(body)) {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              body,
+              type: "IMPORT",
+              submitter: submitter,
+            },
+          },
+          "*"
+        );
+      } else {
+        alert("Invalid JSON");
+      }
+    } else if (submitter === "CSV") {
+      if (isValidCSV(body)) {
+        parent.postMessage(
+          {
+            pluginMessage: {
+              body,
+              type: "IMPORT",
+              submitter: submitter,
+            },
+          },
+          "*"
+        );
+      } else {
+        alert("Invalid CSV");
+      }
+    }
+  });
+
+  function isValidJSON(body) {
+    try {
+      JSON.parse(body);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function isValidCSV(body) {
+    try {
+      let csv = body.split("\n");
+      let headers = csv[0].split(",");
+      let rows = csv.slice(1);
+      if (headers.length < 2) {
+        return false;
+      }
+      for (let i = 0; i < rows.length; i++) {
+        let row = rows[i].split(",");
+        if (row.length !== headers.length) {
+          return false;
+        }
+      }
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+</script>

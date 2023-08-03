@@ -1,0 +1,193 @@
+<style>
+:root {
+  --spacing: 0.8rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+body {
+  background-color: var(--figma-color-bg);
+  color: var(--figma-color-text);
+  margin: 0;
+  padding: var(--spacing);
+}
+
+html,
+body,
+main {
+  height: 100%;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+button {
+  appearance: none;
+  border-radius: 4px;
+  padding: var(--spacing);
+}
+
+textarea {
+  background-color: var(--figma-color-bg-secondary);
+  border: 2px solid var(--figma-color-border);
+  color: var(--figma-color-text-secondary);
+  flex: 1;
+  font-family: Andale Mono, monospace;
+  font-size: 0.9rem;
+  overflow: auto;
+  padding: var(--spacing);
+  white-space: pre;
+}
+textarea:focus {
+  border-color: var(--figma-color-border-selected);
+  outline: none;
+}
+
+form,
+textarea {
+  display: block;
+  width: 100%;
+}
+
+button {
+  background-color: var(--figma-color-bg-brand);
+  border: none;
+  color: var(--figma-color-text-onbrand);
+  font-family: system-ui;
+  font-weight: 600;
+}
+
+button {
+  background-color: var(--figma-color-bg-component);
+  flex-grow: 1;
+}
+
+select,
+input,
+textarea {
+  background-color: var(--figma-color-bg-secondary);
+  color: var(--figma-color-text-secondary);
+  border: 2px solid var(--figma-color-border);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--figma-color-border-selected);
+  outline: none;
+}
+
+select,
+input {
+  flex: 1;
+  margin-bottom: var(--spacing);
+}
+
+form .row {
+  display: flex;
+  gap: 0.5rem;
+}
+	</style>
+<style>
+.hidden {
+  display: none !important;
+}
+	</style>
+<main>
+  <form>
+    <div class="row">
+      <select id="collectionSelect"></select>
+    </div>
+    <div class="row">
+      <button id="JSON" type="button" class="click hidden">
+        Export Variables to JSON
+      </button>
+      <button id="CSV" type="button" class="click">
+        Export Variables to CSV
+      </button>
+    </div>
+  </form>
+  <textarea
+    placeholder="Exported variables will render here..."
+    readonly
+  ></textarea>
+  <div class="row">
+    <button id="copy" type="button" class="hidden">Copy</button>
+  </div>
+</main>
+<script>
+  window.onmessage = ({ data: { pluginMessage } }) => {
+    if (pluginMessage.type === "EXPORT_RESULT") {
+      const result = pluginMessage.result;
+      let printedResult;
+      let validResult = false;
+      if (
+        pluginMessage.fileType === "JSON" &&
+        JSON.parse(result).length === 0
+      ) {
+        printedResult = "No variables to export";
+      } else if (pluginMessage.fileType === "CSV") {
+        const row = result.split("\n");
+        if (row.length <= 1) {
+          printedResult = "No variables to export";
+        } else {
+          printedResult = result;
+          validResult = true;
+        }
+      } else {
+        printedResult = result;
+        validResult = true;
+      }
+      document.querySelector("textarea").innerHTML = printedResult;
+      if (validResult) {
+        document.querySelector("#copy").classList.remove("hidden");
+      }
+    } else if (pluginMessage.type === "GET_COLLECTIONS") {
+      console.log("GET_COLLECTIONS");
+      const select = document.querySelector("#collectionSelect");
+      pluginMessage.result.forEach((collection) => {
+        const option = document.createElement("option");
+        option.value = collection.id;
+        console.log(collection.id);
+        option.innerHTML = collection.name;
+        console.log(collection.name);
+        select.appendChild(option);
+      });
+    }
+  };
+  //
+  document.querySelector("#copy").onclick = function () {
+    document.querySelector("textarea").select();
+    document.execCommand("copy");
+    alert("Copied to clipboard");
+  };
+  //
+  const clickable = document.querySelectorAll(".click");
+  function postExportMessage(e) {
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "EXPORT",
+          submitter: e.target.id,
+          collectionId: document.querySelector("#collectionSelect").value,
+        },
+      },
+      "*"
+    );
+  }
+  Array.from(clickable).forEach(function (button) {
+    button.addEventListener("click", postExportMessage);
+  });
+</script>

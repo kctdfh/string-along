@@ -1,0 +1,19 @@
+{
+  "name": "figma-stringvars-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "code.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp build",
+    "watch": "gulp watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-inject": "^5.0.5",
+    "gulp-replace": "^1.1.4",
+    "gulp-watch": "^5.0.1"
+  }
+}
