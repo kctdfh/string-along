@@ -161,7 +161,7 @@ function processCollection({ name, modes, variableIds, id }, collectionId) {
         // type: resolvedType
       },
       modeValues: [],
-      boundedNodes: getNodesBoundToVariable(variableId),
+      // boundedNodes: getNodesBoundToVariable(variableId),
     };
     // console.log(JSON.stringify(modes, null, 2));
     modes.forEach(({ modeId, name }) => {

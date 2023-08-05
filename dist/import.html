@@ -1,95 +1,436 @@
 <style>
-:root {
-  --spacing: 0.8rem;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 body {
-  background-color: var(--figma-color-bg);
-  color: var(--figma-color-text);
   margin: 0;
-  padding: var(--spacing);
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: white;
+  text-align: left;
+  padding: 1rem;
 }
 
-html,
-body {
-  height: 100%;
-}
-
-form {
+.body-wrapper {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
   height: 100%;
-}
-
-button {
-  appearance: none;
-  border-radius: 4px;
-  padding: var(--spacing);
-}
-
-select,
-input,
-textarea {
-  font-family: Andale Mono, monospace;
-  font-size: 0.9rem;
-  padding: var(--spacing);
-}
-
-textarea {
-  flex: 1;
-  white-space: pre;
-}
-
-form > * {
-  display: block;
   width: 100%;
 }
 
-button {
-  background-color: var(--figma-color-bg-brand);
-  border: none;
-  color: var(--figma-color-text-onbrand);
-  font-family: system-ui;
-  font-weight: 600;
+.toggle-wrapper {
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  background-color: lightgray;
+  height: 32px;
+  font-weight: 500;
 }
 
-select,
-input,
-textarea {
-  background-color: var(--figma-color-bg-secondary);
-  color: var(--figma-color-text-secondary);
-  border: 2px solid var(--figma-color-border);
+.segment-wrapper {
+  z-index: 2;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0px;
+  cursor: pointer;
 }
 
-input:focus,
-textarea:focus {
-  border-color: var(--figma-color-border-selected);
-  outline: none;
+.segment-wrapper label {
+  height: 100%;
+  width: 100%;
+  user-select: none;
+  cursor: pointer;
 }
 
-select,
-input {
+.toggle-wrapper[data-selected="textarea"] .segment-wrapper.textarea {
+  color: black;
+}
+
+.toggle-wrapper[data-selected="tablepreview"] .segment-wrapper.tablepreview {
+  color: black;
+}
+
+.toggle-wrapper[data-selected="textarea"]
+  .segment-wrapper.textarea[data-valid="false"]
+  label {
+  opacity: 0.1;
+}
+
+.toggle-wrapper[data-selected="tablepreview"]
+  .segment-wrapper.tablepreview[data-valid="false"]
+  label {
+  opacity: 0.1;
+}
+
+.toggle-wrapper[data-selected] .segment-wrapper[data-valid] label {
+  transition-delay: 0.2s;
+  transition: all 0.3s ease-in-out;
+}
+
+.selector-indicator {
+  background-color: red;
+  border-radius: inherit;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-wrapper[data-selected="tablepreview"] .selector-indicator {
+  right: 0px;
+  left: 50%;
+}
+
+.toggle-wrapper[data-selected="textarea"] .selector-indicator {
+  left: 0px;
+  right: 50%;
+}
+
+.segment-wrapper input {
+  display: none;
+}
+
+.textarea-wrapper {
+  width: 100%;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  position: relative;
+}
+
+.textarea-wrapper.hidden {
+  display: none;
+}
+
+.textarea-wrapper .instructions {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 2rem;
+  opacity: 100%;
+  transition: all 0.5s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.textarea-wrapper .instructions p {
+  opacity: 25%;
+}
+
+.textarea-wrapper .instructions.hidden {
+  opacity: 0%;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  resize: none;
+  border: gray 1px solid;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  padding: 1rem;
+}
+
+.tablepreview-wrapper {
+  width: 100%;
+  flex: 1;
+  display: block;
+  position: relative;
+  background-color: green;
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper.hidden {
+  display: none;
+}
+
+.error-box {
+  pointer-events: none;
+  text-align: left;
+  padding: 1rem;
+  transition: all 0.5s ease-in-out;
+  background-color: #FFE5E5;
+  border: #A35F5F 1px solid;
+  border-radius: 8px;
+}
+
+.error-box.hidden {
+    display: none;
+}
+
+.error-box p {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #A35F5F;
+  text-align: left;
+}
+
+form {
+    display: contents;
+}
+
+/* the two CTA buttons should take the whole width. if one button is present, it should be full-width */
+
+.cta-wrapper {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    box-sizing: border-box;
+}
+
+
+.cta-wrapper button {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    background-color: transparent;
+    color: white;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+.cta-wrapper button:hover {
+    color: lightgray;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 	</style>
 <style>
-.hidden {
-  display: none !important;
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+textarea::-webkit-scrollbar-thumb:active {
+  background-color: lightgray;
+}
+
+textarea::-webkit-scrollbar-thumb:vertical {
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb:horizontal {
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+textarea::-webkit-resizer {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-button {
+  display: none;
+}
+
+textarea::-webkit-scrollbar-button:end:increment {
+  display: none;
+}
+.tablepreview-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:active {
+  background-color: lightgray;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:vertical {
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:horizontal {
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-resizer {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-button {
+  display: none;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-button:end:increment {
+  display: none;
 }
 	</style>
 
-<form>
+<div class="body-wrapper">
+  <div class="toggle-wrapper" data-selected="textarea">
+    <div class="segment-wrapper textarea" data-valid="true">
+      <input type="radio" name="view-type" id="textarea" value="textarea" />
+      <label for="textarea">Paste table</label>
+    </div>
+    <div class="segment-wrapper tablepreview" data-valid="true">
+      <input
+        type="radio"
+        name="view-type"
+        id="tablepreview"
+        value="tablepreview"
+      />
+      <label for="tablepreview">Table preview</label>
+    </div>
+    <div class="selector-indicator"></div>
+  </div>
+  <form>
+    <div class="textarea-wrapper">
+      <div class="instructions">
+        <p>Paste your variables here</p>
+      </div>
+      <textarea required></textarea>
+    </div>
+    <div class="tablepreview-wrapper hidden"></div>
+    <div class="error-box hidden">
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Recusandae
+        quam earum animi, iste, dolor repudiandae dolore molestiae ut eius
+        facere natus. Quae, fugit eligendi! Architecto, blanditiis! Provident
+        iusto dolorem debitis.
+      </p>
+    </div>
+    <div class="cta-wrapper">
+      <button id="JSON" type="submit" class="hidden">Import JSON</button>
+      <button id="CSV" type="submit">Update Variables from CSV</button>
+    </div>
+  </form>
+</div>
+
+<!-- <form>
   <textarea required placeholder="Variables"></textarea>
   <button id="JSON" type="submit" class="hidden">Import JSON</button>
   <button id="CSV" type="submit">Update Variables from CSV</button>
-</form>
+</form> -->
 
 <script>
+  // attach a listener to every input of type radio with the name "view-type". When the value changes, update the data-selected attribute of the .toggle-wrapper element to the value of the selected radio button, only if the nearest parent with the class "segment-wrapper" has a data-valid attribute of "true". Otherwise alert the user that the input is invalid.
+  document
+    .querySelectorAll("input[type=radio][name=view-type]")
+    .forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        let segmentWrapper = e.target.closest(".segment-wrapper");
+        if (segmentWrapper.dataset.valid === "true") {
+          document.querySelector(".toggle-wrapper").dataset.selected =
+            e.target.value;
+          // if the value is table-preview, hide the textarea-wrapper element and show the table-preview element. Otherwise, hide the table-preview element and show the textarea-wrapper element.
+          if (e.target.value === "tablepreview") {
+            document.querySelector(".textarea-wrapper").classList.add("hidden");
+            document
+              .querySelector(".tablepreview-wrapper")
+              .classList.remove("hidden");
+          } else {
+            document
+              .querySelector(".textarea-wrapper")
+              .classList.remove("hidden");
+            document
+              .querySelector(".tablepreview-wrapper")
+              .classList.add("hidden");
+          }
+        } else {
+          alert("Invalid input");
+        }
+      });
+    });
+  //
+  // when the textarea element inside of the .textarea-wrapper element is in focus, add the class .hidden to the .instructions element. When the textarea element is blurred and has no content inside of it, remove the class .hidden from the .instructions element.
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("focus", (e) => {
+      document
+        .querySelector(".textarea-wrapper .instructions")
+        .classList.add("hidden");
+    });
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("blur", (e) => {
+      if (e.target.value.trim() === "") {
+        document
+          .querySelector(".textarea-wrapper .instructions")
+          .classList.remove("hidden");
+      }
+    });
+  //
   document.querySelector("form").addEventListener("submit", (e) => {
     // if the button that was pressed has the ID of "json"
     let submitter = e.submitter.id;

@@ -1,0 +1,242 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: white;
+  text-align: left;
+  padding: 1rem;
+}
+
+.body-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1rem;
+  height: 100%;
+  width: 100%;
+}
+
+.toggle-wrapper {
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  background-color: lightgray;
+  height: 32px;
+  font-weight: 500;
+}
+
+.segment-wrapper {
+  z-index: 2;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0px;
+  cursor: pointer;
+}
+
+.segment-wrapper label {
+  height: 100%;
+  width: 100%;
+  user-select: none;
+  cursor: pointer;
+}
+
+.toggle-wrapper[data-selected="textarea"] .segment-wrapper.textarea {
+  color: black;
+}
+
+.toggle-wrapper[data-selected="tablepreview"] .segment-wrapper.tablepreview {
+  color: black;
+}
+
+.toggle-wrapper[data-selected="textarea"]
+  .segment-wrapper.textarea[data-valid="false"]
+  label {
+  opacity: 0.1;
+}
+
+.toggle-wrapper[data-selected="tablepreview"]
+  .segment-wrapper.tablepreview[data-valid="false"]
+  label {
+  opacity: 0.1;
+}
+
+.toggle-wrapper[data-selected] .segment-wrapper[data-valid] label {
+  transition-delay: 0.2s;
+  transition: all 0.3s ease-in-out;
+}
+
+.selector-indicator {
+  background-color: red;
+  border-radius: inherit;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-wrapper[data-selected="tablepreview"] .selector-indicator {
+  right: 0px;
+  left: 50%;
+}
+
+.toggle-wrapper[data-selected="textarea"] .selector-indicator {
+  left: 0px;
+  right: 50%;
+}
+
+.segment-wrapper input {
+  display: none;
+}
+
+.textarea-wrapper {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  position: relative;
+}
+
+.textarea-wrapper.hidden {
+  display: none;
+}
+
+.textarea-wrapper .instructions {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 2rem;
+  opacity: 100%;
+  transition: all 0.5s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+}
+
+.textarea-wrapper .instructions p {
+  opacity: 25%;
+}
+
+.textarea-wrapper .instructions.hidden {
+  opacity: 0%;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  resize: none;
+  border: gray 1px solid;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  padding: 1rem;
+}
+
+.tablepreview-wrapper {
+  width: 100%;
+  flex: 1;
+  display: block;
+  position: relative;
+  background-color: green;
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper.hidden {
+  display: none;
+}
+
+.error-box {
+  pointer-events: none;
+  text-align: left;
+  padding: 1rem;
+  transition: all 0.5s ease-in-out;
+  background-color: #FFE5E5;
+  border: #A35F5F 1px solid;
+  border-radius: 8px;
+}
+
+.error-box.hidden {
+    display: none;
+}
+
+.error-box p {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #A35F5F;
+  text-align: left;
+}
+
+form {
+    display: contents;
+}
+
+/* the two CTA buttons should take the whole width. if one button is present, it should be full-width */
+
+.cta-wrapper {
+    width: 100%;
+    display: flex;
+    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    box-sizing: border-box;
+}
+
+
+.cta-wrapper button {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    outline: none;
+    background-color: transparent;
+    color: white;
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+.cta-wrapper button:hover {
+    color: lightgray;
+    background-color: rgba(255, 255, 255, 0.1);
+}

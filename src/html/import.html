@@ -1,13 +1,100 @@
-<link rel="stylesheet" href="/src/css/import.css" />
-<link rel="stylesheet" href="/src/css/main.css" />
+<link rel="stylesheet" href="/src/css/import2.css" />
+<link rel="stylesheet" href="/src/css/main2.css" />
 
-<form>
+<div class="body-wrapper">
+  <div class="toggle-wrapper" data-selected="textarea">
+    <div class="segment-wrapper textarea" data-valid="true">
+      <input type="radio" name="view-type" id="textarea" value="textarea" />
+      <label for="textarea">Paste table</label>
+    </div>
+    <div class="segment-wrapper tablepreview" data-valid="true">
+      <input
+        type="radio"
+        name="view-type"
+        id="tablepreview"
+        value="tablepreview"
+      />
+      <label for="tablepreview">Table preview</label>
+    </div>
+    <div class="selector-indicator"></div>
+  </div>
+  <form>
+    <div class="textarea-wrapper">
+      <div class="instructions">
+        <p>Paste your variables here</p>
+      </div>
+      <textarea required></textarea>
+    </div>
+    <div class="tablepreview-wrapper hidden"></div>
+    <div class="error-box hidden">
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Recusandae
+        quam earum animi, iste, dolor repudiandae dolore molestiae ut eius
+        facere natus. Quae, fugit eligendi! Architecto, blanditiis! Provident
+        iusto dolorem debitis.
+      </p>
+    </div>
+    <div class="cta-wrapper">
+      <button id="JSON" type="submit" class="hidden">Import JSON</button>
+      <button id="CSV" type="submit">Update Variables from CSV</button>
+    </div>
+  </form>
+</div>
+
+<!-- <form>
   <textarea required placeholder="Variables"></textarea>
   <button id="JSON" type="submit" class="hidden">Import JSON</button>
   <button id="CSV" type="submit">Update Variables from CSV</button>
-</form>
+</form> -->
 
 <script>
+  // attach a listener to every input of type radio with the name "view-type". When the value changes, update the data-selected attribute of the .toggle-wrapper element to the value of the selected radio button, only if the nearest parent with the class "segment-wrapper" has a data-valid attribute of "true". Otherwise alert the user that the input is invalid.
+  document
+    .querySelectorAll("input[type=radio][name=view-type]")
+    .forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        let segmentWrapper = e.target.closest(".segment-wrapper");
+        if (segmentWrapper.dataset.valid === "true") {
+          document.querySelector(".toggle-wrapper").dataset.selected =
+            e.target.value;
+          // if the value is table-preview, hide the textarea-wrapper element and show the table-preview element. Otherwise, hide the table-preview element and show the textarea-wrapper element.
+          if (e.target.value === "tablepreview") {
+            document.querySelector(".textarea-wrapper").classList.add("hidden");
+            document
+              .querySelector(".tablepreview-wrapper")
+              .classList.remove("hidden");
+          } else {
+            document
+              .querySelector(".textarea-wrapper")
+              .classList.remove("hidden");
+            document
+              .querySelector(".tablepreview-wrapper")
+              .classList.add("hidden");
+          }
+        } else {
+          alert("Invalid input");
+        }
+      });
+    });
+  //
+  // when the textarea element inside of the .textarea-wrapper element is in focus, add the class .hidden to the .instructions element. When the textarea element is blurred and has no content inside of it, remove the class .hidden from the .instructions element.
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("focus", (e) => {
+      document
+        .querySelector(".textarea-wrapper .instructions")
+        .classList.add("hidden");
+    });
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("blur", (e) => {
+      if (e.target.value.trim() === "") {
+        document
+          .querySelector(".textarea-wrapper .instructions")
+          .classList.remove("hidden");
+      }
+    });
+  //
   document.querySelector("form").addEventListener("submit", (e) => {
     // if the button that was pressed has the ID of "json"
     let submitter = e.submitter.id;

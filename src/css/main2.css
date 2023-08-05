@@ -1,0 +1,92 @@
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+textarea::-webkit-scrollbar-thumb:active {
+  background-color: lightgray;
+}
+
+textarea::-webkit-scrollbar-thumb:vertical {
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar-thumb:horizontal {
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+textarea::-webkit-resizer {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-button {
+  display: none;
+}
+
+textarea::-webkit-scrollbar-button:end:increment {
+  display: none;
+}
+.tablepreview-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:active {
+  background-color: lightgray;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:vertical {
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-thumb:horizontal {
+  border-radius: 8px;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-resizer {
+  background: transparent;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-button {
+  display: none;
+}
+
+.tablepreview-wrapper::-webkit-scrollbar-button:end:increment {
+  display: none;
+}
