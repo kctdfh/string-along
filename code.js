@@ -165,13 +165,13 @@ function parseCollectiontoFile(collectionId) {
 }
 
 // NOTE given a collection, returns its string variables as an array of objects
-function processCollection({ name, modes, variableIDs, id }, collectionId) {
+function processCollection({ name, modes, variableIds, id }, collectionId) {
   if (collectionId !== undefined && collectionId !== id) {
     return [];
   }
   const allVariableObjects = [];
   const collectionName = name;
-  variableIDs.forEach((variableID) => {
+  variableIds.forEach((variableID) => {
     const { name, resolvedType, valuesByMode } =
       figma.variables.getVariableById(variableID);
     if (resolvedType !== "STRING") {
