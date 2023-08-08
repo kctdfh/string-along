@@ -90,3 +90,72 @@ textarea::-webkit-scrollbar-button:end:increment {
 .tablepreview-wrapper::-webkit-scrollbar-button:end:increment {
   display: none;
 }
+
+.tablepreview-wrapper {
+  flex: 1;
+  justify-self: stretch;
+  align-self: stretch;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: 8px;
+  overflow: auto;
+  padding: 0px;
+  background-color: rgba(0, 0, 0, 0.10);
+  border: gray 1px solid;
+}
+
+.tablepreview-wrapper table {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.tablepreview-wrapper.hidden {
+  display: none;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 100%;
+}
+
+table thead tr {
+  color: inherit;
+  text-align: left;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+table thead {
+  background-color: rgba(0, 0, 0, 0.35);
+  position: sticky;
+  top: 0;
+  outline: 1px solid gray;
+}
+
+table th,
+table td {
+  padding: 12px 15px;
+}
+
+table tbody tr {
+  border-bottom: 1px solid gray;
+}
+
+table tbody tr:nth-of-type(even) {
+  background-color: rgba(0, 0, 0, 0.10);
+}
+
+table tbody tr:last-of-type {
+  border-bottom-style: none;
+}
+
+table tbody td.changed {
+  background-color: rgba(0, 255, 0, 0.2);
+}

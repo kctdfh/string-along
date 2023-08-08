@@ -26,11 +26,11 @@ function importCSVFile(body) {
   let variables = [];
   rows.forEach((row) => {
     const cells = row.split(",");
-    const variableId = cells[0].split("__")[0];
+    const variableID = cells[0].split("__")[0];
     const modeId = cells[0].split("__")[1];
     const value = cells[3];
     const variable = variables.find(
-      (variable) => variable.variableMeta.id === variableId
+      (variable) => variable.variableMeta.id === variableID
     );
     if (variable) {
       const mode = variable.modeValues.find((mode) => mode.id === modeId);
@@ -42,7 +42,7 @@ function importCSVFile(body) {
     } else {
       variables.push({
         variableMeta: {
-          id: variableId,
+          id: variableID,
         },
         modeValues: [
           {
@@ -55,15 +55,6 @@ function importCSVFile(body) {
   });
   updateVariablesWithJSONRepresentation(variables);
   console.log("Import finished");
-}
-
-function parseCollectiontoFile(collectionId) {
-  const collections = figma.variables.getLocalVariableCollections();
-  const files = [];
-  collections.forEach((collection) =>
-    files.push(...processCollection(collection, collectionId))
-  );
-  return files;
 }
 
 function exportToCSV(collectionId) {
@@ -105,13 +96,13 @@ function getRootNote(nodeId) {
   return node.id;
 }
 
-function getNodesBoundToVariable(variableId) {
+function getNodesBoundToVariable(variableID) {
   let nodesArray = [];
   const figmaNodes = figma.currentPage.findAll((n) => {
     if (
       n.boundVariables !== undefined &&
       n.boundVariables["characters"] !== undefined &&
-      n.boundVariables["characters"].id === variableId
+      n.boundVariables["characters"].id === variableID
     ) {
       return n;
     }
@@ -137,16 +128,52 @@ function getAllCollections() {
   return collections;
 }
 
-// NOTE returns an array of variable objects
-function processCollection({ name, modes, variableIds, id }, collectionId) {
+function compareUpdatedVariables(body) {
+  const updatedVariables = [];
+  console.log("COMPARE");
+  body.forEach((variable) => {
+    const thisVariable = figma.variables.getVariableById(variable.variableID);
+    if (thisVariable !== null) {
+      let modeValue = thisVariable.valuesByMode[variable.modeId];
+      if (modeValue.trim() !== variable.value.trim()) {
+        updatedVariables.push({
+          variableID: variable.variableID.replace("VariableID:", ""),
+          modeId: variable.modeId,
+        });
+      }
+    } else {
+      console.log("VARIABLE NOT FOUND");
+    }
+  });
+  figma.ui.postMessage({
+    type: "COMPARE_RESULT",
+    result: JSON.stringify(updatedVariables),
+  });
+  return updatedVariables;
+}
+
+// SECTION Collection parsing functions
+
+// NOTE given a collection ID, parse it
+function parseCollectiontoFile(collectionId) {
+  const collections = figma.variables.getLocalVariableCollections();
+  const files = [];
+  collections.forEach((collection) =>
+    files.push(...processCollection(collection, collectionId))
+  );
+  return files;
+}
+
+// NOTE given a collection, returns its string variables as an array of objects
+function processCollection({ name, modes, variableIDs, id }, collectionId) {
   if (collectionId !== undefined && collectionId !== id) {
     return [];
   }
   const allVariableObjects = [];
   const collectionName = name;
-  variableIds.forEach((variableId) => {
+  variableIDs.forEach((variableID) => {
     const { name, resolvedType, valuesByMode } =
-      figma.variables.getVariableById(variableId);
+      figma.variables.getVariableById(variableID);
     if (resolvedType !== "STRING") {
       return;
     }
@@ -157,13 +184,12 @@ function processCollection({ name, modes, variableIds, id }, collectionId) {
       },
       variableMeta: {
         name: name,
-        id: variableId,
+        id: variableID,
         // type: resolvedType
       },
       modeValues: [],
-      // boundedNodes: getNodesBoundToVariable(variableId),
+      // boundedNodes: getNodesBoundToVariable(variableID),
     };
-    // console.log(JSON.stringify(modes, null, 2));
     modes.forEach(({ modeId, name }) => {
       const value = valuesByMode[modeId];
       const modeObj = {
@@ -180,6 +206,10 @@ function processCollection({ name, modes, variableIds, id }, collectionId) {
   );
   return allVariableObjects;
 }
+
+// !SECTION Collection parsing functions
+
+// SECTION sending/receiving messages between plugin and code
 
 figma.ui.onmessage = (e) => {
   // console.log("code received message", e);
@@ -206,8 +236,11 @@ figma.ui.onmessage = (e) => {
     } else {
       exportToCSV(selectedCollectionID);
     }
+  } else if (e.type === "TO_COMPARE") {
+    compareUpdatedVariables(e.body);
   }
 };
+
 if (figma.command === "import") {
   figma.showUI(__uiFiles__["import"], {
     width: 500,
@@ -226,3 +259,5 @@ if (figma.command === "import") {
     result: collections,
   });
 }
+
+// !SECTION sending/receiving messages between plugin and code

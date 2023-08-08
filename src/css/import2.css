@@ -164,79 +164,81 @@ textarea {
   padding: 1rem;
 }
 
-.tablepreview-wrapper {
-  width: 100%;
-  flex: 1;
-  display: block;
-  position: relative;
-  background-color: green;
-  border-radius: 8px;
-}
-
-.tablepreview-wrapper.hidden {
-  display: none;
-}
-
-.error-box {
+#notice {
   pointer-events: none;
   text-align: left;
   padding: 1rem;
   transition: all 0.5s ease-in-out;
-  background-color: #FFE5E5;
-  border: #A35F5F 1px solid;
   border-radius: 8px;
+  place-self: stretch;
 }
 
-.error-box.hidden {
-    display: none;
-}
-
-.error-box p {
+#notice p {
   margin: 0;
   padding: 0;
   font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #A35F5F;
   text-align: left;
 }
 
+.error-box {
+  background-color: #ffe5e5;
+  border: #a35f5f 1px solid;
+}
+
+.info-box {
+  background-color: #e5e5ff;
+  border: #5f5fa3 1px solid;
+}
+
+#notice.hidden {
+  display: none;
+}
+
+.error-box p {
+  color: #a35f5f;
+}
+
+.info-box p {
+  color: #5f5fa3;
+}
+
 form {
-    display: contents;
+  display: contents;
 }
 
 /* the two CTA buttons should take the whole width. if one button is present, it should be full-width */
 
 .cta-wrapper {
-    width: 100%;
-    display: flex;
-    gap: 1rem;
-    flex-direction: row;
-    align-items: center;
-    justify-content: stretch;
-    box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: stretch;
+  box-sizing: border-box;
 }
 
-
 .cta-wrapper button {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    outline: none;
-    background-color: transparent;
-    color: white;
-    font-family: "Roboto", sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-    text-align: center;
-    padding: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-    text-overflow: ellipsis;
-    flex-grow: 1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-overflow: ellipsis;
+  flex-grow: 1;
 }
 
 .cta-wrapper button:hover {
-    color: lightgray;
-    background-color: rgba(255, 255, 255, 0.1);
+  color: lightgray;
+  background-color: rgba(255, 255, 255, 0.1);
 }

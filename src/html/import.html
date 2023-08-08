@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="/src/css/import2.css" />
 <link rel="stylesheet" href="/src/css/main2.css" />
+<link rel="stylesheet" href="/src/css/import2.css" />
 
 <div class="body-wrapper">
   <div class="toggle-wrapper" data-selected="textarea">
@@ -26,7 +26,7 @@
       <textarea required></textarea>
     </div>
     <div class="tablepreview-wrapper hidden"></div>
-    <div class="error-box hidden">
+    <div id="notice" class="error-box hidden">
       <p>
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Recusandae
         quam earum animi, iste, dolor repudiandae dolore molestiae ut eius
@@ -63,6 +63,14 @@
             document
               .querySelector(".tablepreview-wrapper")
               .classList.remove("hidden");
+            let hasChanges = document
+              .querySelector("#notice")
+              .getAttribute("changes");
+            if (hasChanges === "true") {
+              document.querySelector("#notice").classList.remove("hidden");
+            } else {
+              document.querySelector("#notice").classList.add("hidden");
+            }
           } else {
             document
               .querySelector(".textarea-wrapper")
@@ -70,6 +78,9 @@
             document
               .querySelector(".tablepreview-wrapper")
               .classList.add("hidden");
+            validateCSV(
+              document.querySelector(".textarea-wrapper textarea").value
+            );
           }
         } else {
           alert("Invalid input");
@@ -94,6 +105,181 @@
           .classList.remove("hidden");
       }
     });
+  // when the value of the textarea element inside of the .textarea-wrapper element changes, test if it's a comma delimited csv, tab delimited csv, or neither.If it's a valid csv, add the class .hidden to the #notice element, call the "CSVtoTable(delimiter)" function, and remove the "disabled" attribute from the #CSV button. If it's not a valid csv, remove the class .hidden from the #notice element and add the attribute "disabled" to the #CSV button.
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("input", (e) => {
+      console.log("pasted");
+      let body = e.target.value.trim();
+      validateCSV(body);
+    });
+  //
+  function validateCSV(body) {
+    let validCSVcomma = isValidCSV(body, "comma");
+    let validCSVtab = isValidCSV(body, "tab");
+    let tableElement = document.querySelector(".tablepreview-wrapper");
+    if (validCSVcomma) {
+      console.log("valid comma csv");
+      document.querySelector("#notice").classList.add("hidden");
+      document.querySelector("#notice").classList.remove("error-box");
+      document.querySelector("#CSV").removeAttribute("disabled");
+      document.querySelector("#tablepreview").removeAttribute("disabled");
+      CSVtoTable(body, tableElement, "comma");
+    } else if (validCSVtab) {
+      console.log("valid tab csv");
+      document.querySelector("#notice").classList.add("hidden");
+      document.querySelector("#notice").classList.remove("error-box");
+      document.querySelector("#CSV").removeAttribute("disabled");
+      document.querySelector("#tablepreview").removeAttribute("disabled");
+      CSVtoTable(body, tableElement, "tab");
+    }
+    // not valid csv
+    if (!validCSVcomma && !validCSVtab) {
+      invalidCSV(body);
+    }
+    // if body is empty, disable the #CSV button and hide the error box
+    if (body === "") {
+      document.querySelector("#CSV").setAttribute("disabled", "");
+      document.querySelector("#notice").classList.add("hidden");
+      document.querySelector("#notice").classList.remove("error-box");
+    }
+  }
+  //
+  function isValidCSV(body, delimiter) {
+    let newLineRegex = /\n(?=V)/;
+    let delimiterRegex = delimiter === "comma" ? /,/ : /\t/;
+    let rows = body.split(newLineRegex);
+    let rowLength = rows[0].split(delimiterRegex).length;
+    let isValid = true;
+    rows.forEach((row) => {
+      if (row.split(delimiterRegex).length !== rowLength) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+  //
+  function invalidCSV(body) {
+    console.log("invalid csv");
+    document.querySelector("#notice").classList.remove("hidden");
+    document.querySelector("#notice").classList.remove("info-box");
+    document.querySelector("#notice").classList.add("error-box");
+    document.querySelector("#notice p").textContent =
+      "Invalid CSV. Please check your formatting.";
+    document.querySelector("#CSV").setAttribute("disabled", "");
+    document.querySelector("#tablepreview").setAttribute("disabled", "");
+  }
+  //
+  function CSVtoTable(csv, tableElement, delimiter) {
+    let newLineRegex = /\n(?=V)/;
+    let delimiterRegex = delimiter === "comma" ? /,/ : /\t/;
+    let rows = csv.split(newLineRegex);
+    let table = document.createElement("table");
+    let tableBody = document.createElement("tbody");
+    let tableHead = document.createElement("thead");
+    let headerRow = document.createElement("tr");
+    let headerCells = rows[0].split(delimiterRegex);
+    headerCells.shift();
+    headerCells.forEach((cell) => {
+      let headerCell = document.createElement("th");
+      headerCell.textContent = cell;
+      headerRow.appendChild(headerCell);
+    });
+    tableHead.appendChild(headerRow);
+    table.appendChild(tableHead);
+    rows.shift();
+    rows.forEach((row) => {
+      let tableRow = document.createElement("tr");
+      let cells = row.split(delimiterRegex);
+      let id = cells[0];
+      let variableID = id.split("__")[0].replace("VariableID:", "");
+      let modeId = id.split("__")[1];
+      cells.shift();
+      for (let i = 0; i < cells.length; i++) {
+        let identifier = "";
+        if (i === 0) {
+          identifier = variableID;
+        } else if (i === 1) {
+          identifier = modeId;
+        }
+        let tableCell = document.createElement("td");
+        // tableCell.textContent = cells[i] + "" + identifier;
+        tableCell.textContent = cells[i];
+        if (i > 1) {
+          tableCell.classList.add("value");
+          tableCell.setAttribute("data-variableid", variableID);
+          tableCell.setAttribute("data-modeid", modeId);
+        }
+        tableRow.appendChild(tableCell);
+      }
+      tableBody.appendChild(tableRow);
+    });
+    table.appendChild(tableBody);
+    tableElement.innerHTML = "";
+    tableElement.appendChild(table);
+    findChanges();
+  }
+  //
+  function findChanges() {
+    let values = document.querySelectorAll("table .value");
+    let body = [];
+    values.forEach((value) => {
+      let variableID = value.getAttribute("data-variableid");
+      let modeId = value.getAttribute("data-modeid");
+      let newValue = value.textContent;
+      let variable = {
+        variableID: "VariableID:" + variableID,
+        modeId: modeId,
+        value: newValue,
+      };
+      body.push(variable);
+    });
+    parent.postMessage(
+      {
+        pluginMessage: {
+          body: body,
+          type: "TO_COMPARE",
+        },
+      },
+      "*"
+    );
+  }
+  function displayChanges(json) {
+    let changes = JSON.parse(json);
+    let table = document.querySelector("table");
+    let changedCount = 0;
+    changes.forEach((change) => {
+      let variableID = change.variableID;
+      let modeId = change.modeId;
+      let cell = table.querySelector(
+        `.value[data-variableid="${variableID}"][data-modeid="${modeId}"]`
+      );
+      // any hits for cell?
+      if (cell) {
+        changedCount++;
+        cell.classList.add("changed");
+      }
+    });
+    if (changedCount === 0) {
+      document.querySelector("#notice").setAttribute("changes", "false");
+      document.querySelector("#notice").classList.remove("info-box");
+    } else {
+      document.querySelector("#notice").setAttribute("changes", "true");
+      document.querySelector("#notice").classList.add("info-box");
+      document.querySelector(
+        "#notice p"
+      ).textContent = `${changedCount} variables have been updated. They're highlighted here for you to check!`;
+    }
+  }
+  // when a message is received from the plugin code
+  onmessage = (event) => {
+    const message = event.data.pluginMessage;
+    // if the message is of type "COMPARE_RESULT"
+    if (message.type === "COMPARE_RESULT") {
+      console.log("COMPARE_RESULT");
+      displayChanges(message.result);
+    }
+  };
   //
   document.querySelector("form").addEventListener("submit", (e) => {
     // if the button that was pressed has the ID of "json"
