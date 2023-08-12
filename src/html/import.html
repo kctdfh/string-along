@@ -3,16 +3,23 @@
 
 <div class="body-wrapper">
   <div class="toggle-wrapper" data-selected="textarea">
-    <div class="segment-wrapper textarea" data-valid="true">
-      <input type="radio" name="view-type" id="textarea" value="textarea" />
+    <div class="segment-wrapper textarea">
+      <input
+        type="radio"
+        name="view-type"
+        id="textarea"
+        value="textarea"
+        checked
+      />
       <label for="textarea">Paste table</label>
     </div>
-    <div class="segment-wrapper tablepreview" data-valid="true">
+    <div class="segment-wrapper tablepreview">
       <input
         type="radio"
         name="view-type"
         id="tablepreview"
         value="tablepreview"
+        disabled=""
       />
       <label for="tablepreview">Table preview</label>
     </div>
@@ -21,7 +28,7 @@
   <form>
     <div class="textarea-wrapper">
       <div class="instructions">
-        <p>Paste your variables here</p>
+        <p>First, paste your CSV here!</p>
       </div>
       <textarea required></textarea>
     </div>
@@ -35,8 +42,8 @@
       </p>
     </div>
     <div class="cta-wrapper">
-      <button id="JSON" type="submit" class="hidden">Import JSON</button>
-      <button id="CSV" type="submit">Update Variables from CSV</button>
+      <!-- <button id="JSON" type="submit" class="hidden">Import JSON</button> -->
+      <button disabled id="CSV" type="submit">Update Variables from CSV</button>
     </div>
   </form>
 </div>
@@ -52,38 +59,41 @@
   document
     .querySelectorAll("input[type=radio][name=view-type]")
     .forEach((radio) => {
-      radio.addEventListener("change", (e) => {
+      radio.addEventListener("click", (e) => {
         let segmentWrapper = e.target.closest(".segment-wrapper");
-        if (segmentWrapper.dataset.valid === "true") {
-          document.querySelector(".toggle-wrapper").dataset.selected =
-            e.target.value;
-          // if the value is table-preview, hide the textarea-wrapper element and show the table-preview element. Otherwise, hide the table-preview element and show the textarea-wrapper element.
-          if (e.target.value === "tablepreview") {
-            document.querySelector(".textarea-wrapper").classList.add("hidden");
-            document
-              .querySelector(".tablepreview-wrapper")
-              .classList.remove("hidden");
-            let hasChanges = document
-              .querySelector("#notice")
-              .getAttribute("changes");
-            if (hasChanges === "true") {
-              document.querySelector("#notice").classList.remove("hidden");
+        validateCSV(document.querySelector(".textarea-wrapper textarea").value);
+        document.querySelector(".toggle-wrapper").dataset.selected =
+          e.target.value;
+        // if the value is table-preview, hide the textarea-wrapper element and show the table-preview element. Otherwise, hide the table-preview element and show the textarea-wrapper element.
+        if (e.target.value === "tablepreview") {
+          console.log(`tablepreview selected`);
+          document.querySelector(".textarea-wrapper").classList.add("hidden");
+          document
+            .querySelector(".tablepreview-wrapper")
+            .classList.remove("hidden");
+          /* let hasChanges = document.querySelector(
+              `.changed.value[data-variableid][data-modeid]`
+            )
+              ? true
+              : false;
+            let changesCount = 0;
+            if (hasChanges === true) {
+              changesCount = document.querySelectorAll(
+                `.changed.value[data-variableid][data-modeid]`
+              ).length;
+              console.log(`changesCount: ${changesCount}`);
+              notice("show", "hasChanges", changesCount);
             } else {
-              document.querySelector("#notice").classList.add("hidden");
-            }
-          } else {
-            document
-              .querySelector(".textarea-wrapper")
-              .classList.remove("hidden");
-            document
-              .querySelector(".tablepreview-wrapper")
-              .classList.add("hidden");
-            validateCSV(
-              document.querySelector(".textarea-wrapper textarea").value
-            );
-          }
+              console.log(`no changes`);
+              notice("hide");
+            } */
         } else {
-          alert("Invalid input");
+          document
+            .querySelector(".textarea-wrapper")
+            .classList.remove("hidden");
+          document
+            .querySelector(".tablepreview-wrapper")
+            .classList.add("hidden");
         }
       });
     });
@@ -109,70 +119,64 @@
   document
     .querySelector(".textarea-wrapper textarea")
     .addEventListener("input", (e) => {
-      console.log("pasted");
+      console.log("input event");
       let body = e.target.value.trim();
       validateCSV(body);
     });
   //
   function validateCSV(body) {
-    let validCSVcomma = isValidCSV(body, "comma");
-    let validCSVtab = isValidCSV(body, "tab");
-    let tableElement = document.querySelector(".tablepreview-wrapper");
-    if (validCSVcomma) {
-      console.log("valid comma csv");
-      document.querySelector("#notice").classList.add("hidden");
-      document.querySelector("#notice").classList.remove("error-box");
-      document.querySelector("#CSV").removeAttribute("disabled");
-      document.querySelector("#tablepreview").removeAttribute("disabled");
-      CSVtoTable(body, tableElement, "comma");
-    } else if (validCSVtab) {
-      console.log("valid tab csv");
-      document.querySelector("#notice").classList.add("hidden");
-      document.querySelector("#notice").classList.remove("error-box");
-      document.querySelector("#CSV").removeAttribute("disabled");
-      document.querySelector("#tablepreview").removeAttribute("disabled");
-      CSVtoTable(body, tableElement, "tab");
-    }
-    // not valid csv
-    if (!validCSVcomma && !validCSVtab) {
-      invalidCSV(body);
-    }
-    // if body is empty, disable the #CSV button and hide the error box
-    if (body === "") {
-      document.querySelector("#CSV").setAttribute("disabled", "");
-      document.querySelector("#notice").classList.add("hidden");
-      document.querySelector("#notice").classList.remove("error-box");
-    }
-  }
-  //
-  function isValidCSV(body, delimiter) {
-    let newLineRegex = /\n(?=V)/;
-    let delimiterRegex = delimiter === "comma" ? /,/ : /\t/;
-    let rows = body.split(newLineRegex);
-    let rowLength = rows[0].split(delimiterRegex).length;
-    let isValid = true;
+    console.log("validating csv");
+    const pastedContent = body.replace(
+      /\t(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/g,
+      ","
+    );
+    const rows = pastedContent.split(/\r?\n/);
+    const columnCount = rows[0].split(",").length;
+    let validCSV = true;
     rows.forEach((row) => {
-      if (row.split(delimiterRegex).length !== rowLength) {
-        isValid = false;
+      let columns = row.split(",");
+      if (columns.length < columnCount) {
+        validCSV = false;
       }
     });
-    return isValid;
+    let tableElement = document.querySelector(".tablepreview-wrapper");
+
+    // if "pastedContent" has no commas, it's not a valid csv.
+    if (
+      pastedContent.indexOf(",") === -1 ||
+      pastedContent.length === 0 ||
+      pastedContent.indexOf("\n") === -1
+    ) {
+      validCSV = false;
+    }
+
+    if (validCSV) {
+      console.log("valid csv");
+      CSVtoTable(pastedContent, tableElement);
+      // is valid csv
+      notice("hide");
+      document.querySelector("#CSV").removeAttribute("disabled");
+      document.querySelector("#tablepreview").removeAttribute("disabled");
+    } else {
+      invalidCSV(pastedContent);
+    }
   }
   //
   function invalidCSV(body) {
+    if (body.trim().length < 1) {
+      document.querySelector("#tablepreview").setAttribute("disabled", "");
+      notice("hide");
+      return;
+    }
     console.log("invalid csv");
-    document.querySelector("#notice").classList.remove("hidden");
-    document.querySelector("#notice").classList.remove("info-box");
-    document.querySelector("#notice").classList.add("error-box");
-    document.querySelector("#notice p").textContent =
-      "Invalid CSV. Please check your formatting.";
+    notice("show", "invalidCSV");
     document.querySelector("#CSV").setAttribute("disabled", "");
     document.querySelector("#tablepreview").setAttribute("disabled", "");
   }
   //
-  function CSVtoTable(csv, tableElement, delimiter) {
-    let newLineRegex = /\n(?=V)/;
-    let delimiterRegex = delimiter === "comma" ? /,/ : /\t/;
+  function CSVtoTable(csv, tableElement) {
+    let newLineRegex = /\n(?=V)/g;
+    let delimiterRegex = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/g;
     let rows = csv.split(newLineRegex);
     let table = document.createElement("table");
     let tableBody = document.createElement("tbody");
@@ -244,32 +248,58 @@
       "*"
     );
   }
+  //
+  function notice(display, message, changedCount) {
+    const noticeBox = document.querySelector("#notice");
+    switch (display) {
+      case "show":
+        noticeBox.classList.remove("hidden");
+        break;
+      case "hide":
+        noticeBox.classList.add("hidden");
+        break;
+    }
+    switch (message) {
+      case "hasChanges":
+        noticeBox.classList.add("info-box");
+        noticeBox.classList.remove("error-box");
+        noticeBox.querySelector(
+          "p"
+        ).textContent = `${changedCount} variables have been updated. They're highlighted here for you to check!`;
+        break;
+      case "invalidCSV":
+        noticeBox.classList.add("error-box");
+        noticeBox.classList.remove("info-box");
+        noticeBox.querySelector("p").textContent =
+          "Invalid CSV. Please check your formatting.";
+        break;
+      default:
+        noticeBox.classList.remove("error-box");
+        noticeBox.classList.remove("info-box");
+    }
+  }
   function displayChanges(json) {
+    const activeTab =
+      document.querySelector(".toggle-wrapper").dataset.selected;
     let changes = JSON.parse(json);
     let table = document.querySelector("table");
-    let changedCount = 0;
+    let changesCount = 0;
     changes.forEach((change) => {
       let variableID = change.variableID;
       let modeId = change.modeId;
       let cell = table.querySelector(
         `.value[data-variableid="${variableID}"][data-modeid="${modeId}"]`
       );
-      // any hits for cell?
       if (cell) {
-        changedCount++;
+        changesCount++;
         cell.classList.add("changed");
       }
+      if (activeTab === "tablepreview") {
+        notice("show", "hasChanges", changesCount);
+      } else {
+        notice("hide");
+      }
     });
-    if (changedCount === 0) {
-      document.querySelector("#notice").setAttribute("changes", "false");
-      document.querySelector("#notice").classList.remove("info-box");
-    } else {
-      document.querySelector("#notice").setAttribute("changes", "true");
-      document.querySelector("#notice").classList.add("info-box");
-      document.querySelector(
-        "#notice p"
-      ).textContent = `${changedCount} variables have been updated. They're highlighted here for you to check!`;
-    }
   }
   // when a message is received from the plugin code
   onmessage = (event) => {

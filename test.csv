@@ -5,3 +5,12 @@ VariableID:105:5__105:1,byeBye,English,Bye TEST
 VariableID:105:5__105:2,byeBye,French,
 VariableID:107:6__105:1,thisIsIt,English,Mango
 VariableID:107:6__105:2,thisIsIt,French,French Mango TEST
+
+
+ID (do not change)	Name	Mode	String
+VariableID:105:4__105:1	helloThere	English	Hello World Changed
+VariableID:105:4__105:2	helloThere	French	Hallo
+VariableID:105:5__105:1	byeBye	English	Bye TEST
+VariableID:105:5__105:2	byeBye	French	
+VariableID:107:6__105:1	thisIsIt	English	Mango
+VariableID:107:6__105:2	thisIsIt	French	French Mango TEST

@@ -27,7 +27,7 @@ gulp.task('inject-styles', function () {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./src/**/*.*', gulp.series('build'))
+  gulp.watch(['./src/**/*.*', './*.*'], gulp.series('build'))
 });
 
 gulp.task('build', gulp.series('add-styles', 'inject-styles'));

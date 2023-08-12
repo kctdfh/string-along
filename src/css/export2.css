@@ -1,0 +1,131 @@
+/* .col {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+} */
+
+:root {
+  --spacing: 0.8rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+body {
+  background-color: var(--figma-color-bg);
+  color: var(--figma-color-text);
+  margin: 0;
+  padding: var(--spacing);
+}
+
+html,
+body,
+main {
+  height: 100%;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+textarea {
+  background-color: var(--figma-color-bg-secondary);
+  border: 2px solid var(--figma-color-border);
+  color: var(--figma-color-text-secondary);
+  flex: 1;
+  font-family: Andale Mono, monospace;
+  font-size: 0.9rem;
+  overflow: auto;
+  padding: var(--spacing);
+  white-space: pre;
+}
+textarea:focus {
+  border-color: var(--figma-color-border-selected);
+  outline: none;
+}
+
+form,
+textarea {
+  display: block;
+  width: 100%;
+}
+
+select,
+input,
+textarea {
+  background-color: var(--figma-color-bg-secondary);
+  color: var(--figma-color-text-secondary);
+  border: 2px solid var(--figma-color-border);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--figma-color-border-selected);
+  outline: none;
+}
+
+select,
+input {
+  flex: 1;
+  margin-bottom: var(--spacing);
+}
+
+form .row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+button:hover {
+  color: lightgray;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+button:disabled {
+  border: 1px solid rgb(113, 113, 113);
+  outline: none;
+  background-color: rgb(64, 64, 64);
+  color: white;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: rgb(64, 64, 64);
+}
+
+.cta-wrapper {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: stretch;
+  box-sizing: border-box;
+}

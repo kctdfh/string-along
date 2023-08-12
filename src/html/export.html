@@ -1,24 +1,45 @@
-<link rel="stylesheet" href="/src/css/export.css" />
-<link rel="stylesheet" href="/src/css/main.css" />
+<link rel="stylesheet" href="/src/css/export2.css" />
+<link rel="stylesheet" href="/src/css/main2.css" />
+<link rel="stylesheet" href="/src/css/selectBox.css" />
 <main>
   <form>
     <div class="row">
-      <select id="collectionSelect"></select>
+      <div id="collectionSelect" class="select-box">
+        <div class="select-box__current" tabindex="1">
+          <div class="select-box__value"></div>
+          <img
+            aria-hidden="true"
+            class="select-box__icon"
+            alt="Arrow Icon"
+            src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gU3ZnIFZlY3RvciBJY29ucyA6IGh0dHA6Ly93d3cub25saW5ld2ViZm9udHMuY29tL2ljb24gLS0+DQo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjU2IDI1NiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8bWV0YWRhdGE+IFN2ZyBWZWN0b3IgSWNvbnMgOiBodHRwOi8vd3d3Lm9ubGluZXdlYmZvbnRzLmNvbS9pY29uIDwvbWV0YWRhdGE+DQo8Zz48Zz48cGF0aCBmaWxsPSIjMDAwMDAwIiBkPSJNMTI4LDE5NC4zTDEwLDc2LjhsMTUuNS0xNS4xTDEyOCwxNjQuMkwyMzAuNSw2MS43TDI0Niw3Ni44TDEyOCwxOTQuM3oiLz48L2c+PC9nPg0KPC9zdmc+"
+          />
+        </div>
+        <ul class="select-box__list"></ul>
+      </div>
+      <button id="CSV" type="button" class="click">Generate CSV</button>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <button id="JSON" type="button" class="click hidden">
         Export Variables to JSON
       </button>
-      <button id="CSV" type="button" class="click">
+      <button id="" type="button" class="click">
         Export Variables to CSV
       </button>
-    </div>
+    </div> -->
   </form>
   <textarea
     placeholder="Exported variables will render here..."
     readonly
   ></textarea>
-  <div class="row">
+  <div id="notice" class="error-box">
+    <p>
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Recusandae quam
+      earum animi, iste, dolor repudiandae dolore molestiae ut eius facere
+      natus. Quae, fugit eligendi! Architecto, blanditiis! Provident iusto
+      dolorem debitis.
+    </p>
+  </div>
+  <div class="cta-wrapper">
     <button id="copy" type="button" class="hidden">Copy</button>
   </div>
 </main>
@@ -53,20 +74,70 @@
       console.log("GET_COLLECTIONS");
       const select = document.querySelector("#collectionSelect");
       pluginMessage.result.forEach((collection) => {
-        const option = document.createElement("option");
+        /* const option = document.createElement("option");
         option.value = collection.id;
         console.log(collection.id);
         option.innerHTML = collection.name;
         console.log(collection.name);
-        select.appendChild(option);
+        select.appendChild(option); */
+        const index = pluginMessage.result.indexOf(collection);
+
+        // radio button
+        const radioTarget = document.querySelector(".select-box__value");
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.classList.add("select-box__input");
+        radio.id = collection.id;
+        radio.value = collection.id;
+        radio.name = "collectionSelect";
+        const radioLabel = document.createElement("p");
+        radioLabel.classList.add("select-box__input-text");
+        radioLabel.innerHTML = collection.name;
+        radioTarget.appendChild(radio);
+        radioTarget.appendChild(radioLabel);
+
+        if (index === 0) {
+          radio.checked = "checked";
+        }
+
+        // label in the dropdown list
+        const labelTarget = document.querySelector(".select-box__list");
+        const labelWrapper = document.createElement("li");
+        const label = document.createElement("label");
+        label.classList.add("select-box__option");
+        label.htmlFor = collection.id;
+        label.innerHTML = collection.name;
+        labelWrapper.appendChild(label);
+        labelTarget.appendChild(labelWrapper);
+
+        console.log(radioTarget.innerHTML);
+        console.log(labelTarget.innerHTML);
       });
+      // set the value of the first radio button
+      document.querySelector(".select-box__input").checked = "checked";
     }
   };
+  //
+  document.querySelectorAll(".select-box__option").forEach((option) => {
+    option.addEventListener("click", () => {
+      const select = document.querySelector(
+        "#collectionSelect .select-box__input[name='collectionSelect']"
+      );
+      select.value = option.htmlFor;
+      // log the currently selected radio input value
+      console.log("Now selected:");
+      console.log(
+        document.querySelector(
+          "#collectionSelect .select-box__input[name='collectionSelect']:checked"
+        ).value
+      );
+    });
+  });
   //
   document.querySelector("#copy").onclick = function () {
     document.querySelector("textarea").select();
     document.execCommand("copy");
-    alert("Copied to clipboard");
+    // alert("Copied to clipboard");
   };
   //
   const clickable = document.querySelectorAll(".click");
@@ -76,7 +147,9 @@
         pluginMessage: {
           type: "EXPORT",
           submitter: e.target.id,
-          collectionId: document.querySelector("#collectionSelect").value,
+          collectionId: document.querySelector(
+            "#collectionSelect .select-box__input[name='collectionSelect']:checked"
+          ).value,
         },
       },
       "*"

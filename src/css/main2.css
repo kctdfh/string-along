@@ -1,5 +1,6 @@
 textarea::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 textarea::-webkit-scrollbar-track {
@@ -46,6 +47,7 @@ textarea::-webkit-scrollbar-button:end:increment {
 }
 .tablepreview-wrapper::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-track {
@@ -56,6 +58,7 @@ textarea::-webkit-scrollbar-button:end:increment {
   background-color: gray;
   border-radius: 8px;
   border: 2px solid transparent;
+  transition: all 1s ease-in-out;
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-thumb:hover {
@@ -133,7 +136,7 @@ table thead tr {
 }
 
 table thead {
-  background-color: rgba(0, 0, 0, 0.35);
+  background-color: rgb(35, 35, 35);
   position: sticky;
   top: 0;
   outline: 1px solid gray;
@@ -158,4 +161,45 @@ table tbody tr:last-of-type {
 
 table tbody td.changed {
   background-color: rgba(0, 255, 0, 0.2);
+}
+
+#notice {
+  pointer-events: none;
+  text-align: left;
+  padding: 12px;
+  transition: all 0.5s ease-in-out;
+  border-radius: 8px;
+  place-self: stretch;
+}
+
+#notice p {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.error-box {
+  background-color: #ffe5e5;
+  border: #a35f5f 1px solid;
+}
+
+.info-box {
+  background-color: #e5e5ff;
+  border: #5f5fa3 1px solid;
+}
+
+#notice.hidden {
+  display: none;
+}
+
+.error-box p {
+  color: #a35f5f;
+}
+
+.info-box p {
+  color: #5f5fa3;
 }
