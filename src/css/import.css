@@ -1,77 +1,279 @@
-:root {
-  --spacing: 0.8rem;
+.body-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--spacing);
+  height: 100%;
+  width: 100%;
 }
 
-* {
-  box-sizing: border-box;
+.toggle-wrapper {
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  background-color: var(--background);
+  height: 42px;
+  font-weight: 400;
+  border: 1px solid var(--border-weak);
+  /* padding-top: 6px;
+  padding-bottom: 6px; */
 }
 
-body {
-  background-color: var(--figma-color-bg);
-  color: var(--figma-color-text);
-  margin: 0;
-  padding: var(--spacing);
+.toggle-wrapper {
+  box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.85);
 }
 
-html,
-body {
+.toggle-wrapper:has(:disabled) {
+  background-color: var(--surface-mid);
+}
+
+.segment-wrapper {
+  z-index: 2;
+  width: calc(50% - 5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 0px;
+  cursor: pointer;
+}
+
+.segment-wrapper label {
+  /* height: calc(100% - 6px); */
+  width: 100%;
+  user-select: none;
+  cursor: pointer;
+}
+
+.toggle-wrapper[data-selected="textarea"] .segment-wrapper.textarea, .toggle-wrapper[data-selected="tablepreview"] .segment-wrapper.tablepreview {
+  color: var(--status-text);
+}
+
+.toggle-wrapper[data-selected="textarea"]
+  .segment-wrapper.tablepreview:has(> input:not(:disabled)) {
+  color: var(--primary) !important;
+}
+
+.toggle-wrapper[data-selected="tablepreview"]
+  .segment-wrapper.textarea:has(> input:not(:disabled)) {
+  color: var(--primary) !important;
+}
+
+/* 
+.toggle-wrapper .segment-wrapper input + label {
+  color: var(--status-text);
+} */
+
+.toggle-wrapper .segment-wrapper input[disabled] + label {
+  color: var(--surface-hight);
+  cursor: not-allowed !important;
+}
+
+.toggle-wrapper .segment-wrapper input[disabled] {
+  cursor: not-allowed !important;
+}
+
+.toggle-wrapper[data-selected] .segment-wrapper label {
+  transition-delay: 0.2s;
+  transition: all 0.3s ease-in-out;
+}
+
+.selector-indicator {
+  background-color: var(--primary);
+  border-radius: 6px;
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  height: 32px;
+  /* top: 50%;
+  bottom: 50%; */
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.toggle-wrapper[data-selected="tablepreview"] .selector-indicator {
+  left: calc(50% - 5px);
+  right: 5px;
+}
+
+.toggle-wrapper[data-selected="textarea"] .selector-indicator {
+  left: 5px;
+  right: calc(50% - 5px);
+}
+
+.segment-wrapper input {
+  display: none;
+}
+
+.textarea-wrapper {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  position: relative;
+}
+
+.textarea-wrapper.hidden {
+  display: none;
+}
+
+.textarea-wrapper .instructions {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 100%;
+  transition: all 0.5s ease-in-out;
+  border-radius: 8px;
+}
+
+.textarea-wrapper .instructions.hidden {
+  opacity: 0%;
+}
+
+textarea {
+  width: 100%;
   height: 100%;
 }
 
 form {
+  display: contents;
+}
+
+/* the two CTA buttons should take the whole width. if one button is present, it should be full-width */
+
+.cta-wrapper {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: stretch;
+  box-sizing: border-box;
+}
+
+/* .cta-wrapper button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  background-color: transparent;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.cta-wrapper button:hover {
+  color: lightgray;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cta-wrapper button:disabled {
+  border: 1px solid rgb(113, 113, 113);
+  outline: none;
+  background-color: rgb(64, 64, 64);
+  color: white;
+  cursor: not-allowed;
+}
+
+.cta-wrapper button:disabled:hover {
+  background-color: rgb(64, 64, 64);
+} */
+
+.tablepreview-wrapper {
+  flex: 1;
+  justify-self: stretch;
+  align-self: stretch;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
-  height: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: 8px;
+  overflow: auto;
+  padding: 0px;
+  background-color: var(--background);
+  border: var(--border-weak) 1px solid;
 }
 
-button {
-  appearance: none;
-  border-radius: 4px;
-  padding: var(--spacing);
+.tablepreview-wrapper table {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-select,
-input,
-textarea {
-  font-family: Andale Mono, monospace;
-  font-size: 0.9rem;
-  padding: var(--spacing);
+.tablepreview-wrapper.hidden {
+  display: none;
 }
 
-textarea {
-  flex: 1;
-  white-space: pre;
+table {
+  border-collapse: collapse;
+  margin: 0;
+  font-size: var(--text-md);
+  min-width: 100%;
+  background-color: var(--background);
 }
 
-form > * {
-  display: block;
-  width: 100%;
+table thead tr {
+  color: inherit;
+  text-align: left;
 }
 
-button {
-  background-color: var(--figma-color-bg-brand);
-  border: none;
-  color: var(--figma-color-text-onbrand);
-  font-family: system-ui;
-  font-weight: 600;
+table thead {
+  background-color: var(--surface-mid);
+  position: sticky;
+  top: 0;
+  outline: 1px solid var(--border);
 }
 
-select,
-input,
-textarea {
-  background-color: var(--figma-color-bg-secondary);
-  color: var(--figma-color-text-secondary);
-  border: 2px solid var(--figma-color-border);
+table th {
+  font-weight: 500;
 }
 
-input:focus,
-textarea:focus {
-  border-color: var(--figma-color-border-selected);
-  outline: none;
+table th,
+table td {
+  padding: 12px 15px;
 }
 
-select,
-input {
-  flex: 1;
+table tbody tr {
+  border-bottom: 1px solid var(--border-weak);
+}
+
+table tbody tr:nth-of-type(even) {
+  background-color: var(--background);
+}
+
+/* table tbody tr:last-of-type {
+  border-bottom-style: none;
+} */
+
+table tbody td.changed {
+  background-color: var(--info-weak);
+  color: var(--status-text) !important;
 }

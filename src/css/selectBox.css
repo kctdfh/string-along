@@ -3,9 +3,11 @@
     display: inline-block;
     width: 70%;
     margin: 0 auto;
-    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
-    font-size: 18px;
-    color: #60666d;
+    color: var(--surface-text);
+    z-index: 2;
+    background-color: transparent;
+    border-radius: 8px;
+    /* border: var(--border) 1px solid; */
 }
 /* @media (min-width: 768px) {
     .select-box {
@@ -26,14 +28,33 @@
 ul {
     margin-block-start: 4px;
     margin-block-end: 4px;
+    background-color: var(--surface) !important;
+    border-radius: 8px;
 }
 
 .select-box__current {
     position: relative;
-    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1); */
     cursor: pointer;
     outline: none;
+    background-color: transparent;
+    border-radius: 8px;
+    border: var(--border-weak) 1px solid;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
 }
+
+.select-box__current:focus {
+    border-color: var(--primary);
+    background-color: var(--surface);
+}
+
+.select-box__current:focus {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .select-box__current:focus + .select-box__list {
     opacity: 1;
     animation-name: none;
@@ -50,7 +71,6 @@ ul {
     right: 15px;
     transform: translateY(-50%);
     width: 20px;
-    opacity: 0.3;
     transition: 0.2s ease;
 }
 .select-box__value {
@@ -66,8 +86,8 @@ ul {
     display: none;
     width: 100%;
     margin: 0;
-    padding: 15px;
-    background-color: #fff;
+    padding: 16px;
+    background-color: transparent;
 }
 .select-box__list {
     position: absolute;
@@ -80,17 +100,36 @@ ul {
     animation-delay: 0.5s;
     animation-fill-mode: forwards;
     animation-timing-function: step-start;
-    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+    border: var(--border-weak) 1px solid;
+    /* box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1); */
+    border-radius: 8px;
 }
+
 .select-box__option {
     display: block;
-    padding: 15px;
-    background-color: #fff;
+    padding: 16px;
+    transition: all 0.2s ease-out;
+    /* background-color: var(--surface-mid);
+    background-color: var(--surface-mid-text); */
 }
-.select-box__option:hover, .select-box__option:focus {
-    color: #546c84;
-    background-color: #fbfbfb;
+
+.select-box__list li:hover {
+    color: black;
+    background-color: var(--primary-hover);
 }
+
+.select-box__list li:is(:first-child) {
+    border-radius: 8px 8px 0 0;
+}
+
+.select-box__list li:is(:last-child) {
+    border-radius: 0 0 8px 8px;
+}
+
+.select-box__option:has(> :checked) {
+    background-color: var(--primary-active);
+}
+
 @keyframes HideList {
     from {
         transform: scaleY(1);

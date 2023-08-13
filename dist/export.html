@@ -1,17 +1,50 @@
 <style>
+:root {
+  --spacing: 0.8rem;
+
+  --background: #121212;
+  --surface: #1e1e1e;
+  --surface-text: #ffffff;
+  --surface-mid: #2f2f2f;
+  --surface-mid-text: #ffffff;
+  --surface-hight: #767676;
+  --surface-hight-text: #ffffff;
+  --surface-pressed: #c6c6c6;
+  --surface-pressed-text: #000000;
+
+  --primary: #bb86fc;
+  --primary-hover: #dbb2ff;
+  --primary-pressed: #f2e7fe;
+  --primary-active: rgba(187, 134, 252, 0.5);
+
+  --success: #03dac5;
+  --success-weak: #70efde;
+  --info: #2196f3;
+  --info-weak: #6ec6ff;
+  --error: #cf6679;
+  --error-weak: #ff8e98;
+  --status-text: black;
+
+  --border: #ffffff99;
+  --border-weak: #ffffff4d;
+  --border-active: #bb86fc;
+
+  --primary-button-text: #bb86fc;
+  --primary-button-selected-text: black;
+
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+}
+	</style>
+<style>
 /* .col {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
 } */
 
-:root {
-  --spacing: 0.8rem;
-}
 
-* {
-  box-sizing: border-box;
-}
 
 form {
   display: flex;
@@ -21,26 +54,7 @@ form {
   margin-bottom: 0px;
 }
 
-body {
-  background-color: var(--figma-color-bg);
-  color: var(--figma-color-text);
-  margin: 0;
-  padding: var(--spacing);
-}
-
-html,
-body,
-main {
-  height: 100%;
-}
-
-main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing);
-}
-
-textarea {
+/* textarea {
   background-color: var(--figma-color-bg-secondary);
   border: 2px solid var(--figma-color-border);
   color: var(--figma-color-text-secondary);
@@ -54,7 +68,7 @@ textarea {
 textarea:focus {
   border-color: var(--figma-color-border-selected);
   outline: none;
-}
+} */
 
 form,
 textarea {
@@ -62,37 +76,36 @@ textarea {
   width: 100%;
 }
 
-select,
+/* select,
 input,
 textarea {
   background-color: var(--figma-color-bg-secondary);
   color: var(--figma-color-text-secondary);
   border: 2px solid var(--figma-color-border);
-}
+} */
 
-input:focus,
+/* input:focus,
 textarea:focus {
   border-color: var(--figma-color-border-selected);
   outline: none;
-}
+} */
 
-select,
+/* select,
 input {
   flex: 1;
   margin-bottom: var(--spacing);
-}
+} */
 
 form .row {
   display: flex;
   gap: 0.5rem;
 }
 
-button {
+/* button {
   border: 1px solid rgba(255, 255, 255, 0.1);
   outline: none;
   background-color: transparent;
   color: white;
-  font-family: "Roboto", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
@@ -119,7 +132,7 @@ button:disabled {
 
 button:disabled:hover {
   background-color: rgb(64, 64, 64);
-}
+} */
 
 .cta-wrapper {
   width: 100%;
@@ -130,7 +143,54 @@ button:disabled:hover {
   justify-content: stretch;
   box-sizing: border-box;
 }
-	</style>
+
+.textarea-wrapper {
+  width: 100%;
+  flex: 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  position: relative;
+}
+
+.textarea-wrapper.hidden {
+  display: none;
+}
+
+.textarea-wrapper .instructions {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 100%;
+  transition: all 0.5s ease-in-out;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.textarea-wrapper .instructions p {
+  opacity: 100%;
+}
+
+.textarea-wrapper .instructions.hidden {
+  opacity: 0%;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}	</style>
 <style>
 textarea::-webkit-scrollbar {
   width: 8px;
@@ -142,18 +202,18 @@ textarea::-webkit-scrollbar-track {
 }
 
 textarea::-webkit-scrollbar-thumb {
-  background-color: gray;
+  background-color: var(--surface-mid);
   border-radius: 8px;
   border: 2px solid transparent;
 }
 
 textarea::-webkit-scrollbar-thumb:hover {
-  background-color: lightgray;
+  background-color: var(--surface-hight);
   cursor: pointer;
 }
 
 textarea::-webkit-scrollbar-thumb:active {
-  background-color: lightgray;
+  background-color: var(--surface-pressed);
 }
 
 textarea::-webkit-scrollbar-thumb:vertical {
@@ -189,19 +249,19 @@ textarea::-webkit-scrollbar-button:end:increment {
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-thumb {
-  background-color: gray;
+  background-color: var(--surface-mid);
   border-radius: 8px;
   border: 2px solid transparent;
   transition: all 1s ease-in-out;
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-thumb:hover {
-  background-color: lightgray;
+  background-color: var(--surface-hight);
   cursor: pointer;
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-thumb:active {
-  background-color: lightgray;
+  background-color: var(--surface-pressed);
 }
 
 .tablepreview-wrapper::-webkit-scrollbar-thumb:vertical {
@@ -228,79 +288,123 @@ textarea::-webkit-scrollbar-button:end:increment {
   display: none;
 }
 
-.tablepreview-wrapper {
-  flex: 1;
-  justify-self: stretch;
-  align-self: stretch;
-  position: relative;
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+main {
+  height: 100%;
+}
+
+main {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  text-align: left;
-  border-radius: 8px;
-  overflow: auto;
-  padding: 0px;
-  background-color: rgba(0, 0, 0, 0.10);
-  border: gray 1px solid;
+  gap: var(--spacing);
 }
 
-.tablepreview-wrapper table {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.tablepreview-wrapper.hidden {
-  display: none;
-}
-
-table {
-  border-collapse: collapse;
+body {
+  background-color: var(--background);
+  color: var(--figma-color-text);
   margin: 0;
-  font-size: 0.9em;
-  font-family: sans-serif;
-  min-width: 100%;
+  padding: var(--spacing);
+  font-family: "Open Sans", "Roboto", sans-serif;
+  font-size: var(--text-md);
 }
 
-table thead tr {
-  color: inherit;
+button {
+  border: 1px solid var(--primary);
+  outline: none;
+  background-color: transparent;
+  color: var(--primary);
+  font-size: var(--text-md);
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  border-radius: 8px;
+}
+
+button.success {
+  border: 1px solid var(--success) !important;
+  background-color: var(--success-weak) !important;
+  color: var(--status-text) !important;
+}
+
+button.cta {
+  padding: 16px;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+  color: var(--status-text);
+}
+
+button:disabled {
+  border: 1px solid var(--surface-mid);
+  color: var(--surface-hight);
+  background-color: var(--surface-mid);
+  cursor: not-allowed;
+}
+
+textarea {
+  border: var(--border-weak) 1px solid;
+  outline: none;
+  background-color: var(--background);
+  color: var(--surface-hight-text);
+  font-size: var(--text-sm);
+  font-family: monospace;
+  font-weight: 400;
+  line-height: 1.5;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0.35);
+  padding: 16px;
+  border-radius: 8px;
+  resize: none;
+  transition: all 0.2s ease-out;
 }
 
-table thead {
-  background-color: rgb(35, 35, 35);
-  position: sticky;
-  top: 0;
-  outline: 1px solid gray;
+textarea:focus {
+  border: var(--border-active) 1px solid;
+  outline: none;
+  background-color: var(--surface);
+  color: var(--surface-hight-text);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  padding: 16px;
+  border-radius: 8px;
+  resize: none;
 }
 
-table th,
-table td {
-  padding: 12px 15px;
+.instructions {
+  color: var(--surface-hight);
+  background-color: var(--background);
+  border: var(--border-weak) 1px solid;
+  padding-right: 4rem;
+  padding-left: 4rem;
+  gap: 1rem;
 }
 
-table tbody tr {
-  border-bottom: 1px solid gray;
-}
+.instructions svg {
+    margin-bottom: 1rem;
+  }
 
-table tbody tr:nth-of-type(even) {
-  background-color: rgba(0, 0, 0, 0.10);
-}
-
-table tbody tr:last-of-type {
-  border-bottom-style: none;
-}
-
-table tbody td.changed {
-  background-color: rgba(0, 255, 0, 0.2);
+.instructions p {
+  font-size: var(--text-lg);
+  margin: 0;
 }
 
 #notice {
   pointer-events: none;
   text-align: left;
-  padding: 12px;
+  padding: 16px;
   transition: all 0.5s ease-in-out;
   border-radius: 8px;
   place-self: stretch;
@@ -309,21 +413,20 @@ table tbody td.changed {
 #notice p {
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
+  font-size: var(--text-sm);
+  font-weight: 500;
   line-height: 1.5;
   text-align: left;
 }
 
 .error-box {
-  background-color: #ffe5e5;
-  border: #a35f5f 1px solid;
+  background-color: var(--error-weak);
+  border: var(--error) 1px solid;
 }
 
 .info-box {
-  background-color: #e5e5ff;
-  border: #5f5fa3 1px solid;
+  background-color: var(--info-weak);
+  border: var(--info) 1px solid;
 }
 
 #notice.hidden {
@@ -331,21 +434,24 @@ table tbody td.changed {
 }
 
 .error-box p {
-  color: #a35f5f;
+  color: var(--status-text);
 }
 
 .info-box p {
-  color: #5f5fa3;
-}	</style>
+  color: var(--status-text);
+}
+	</style>
 <style>
 .select-box {
     position: relative;
     display: inline-block;
     width: 70%;
     margin: 0 auto;
-    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
-    font-size: 18px;
-    color: #60666d;
+    color: var(--surface-text);
+    z-index: 2;
+    background-color: transparent;
+    border-radius: 8px;
+    /* border: var(--border) 1px solid; */
 }
 /* @media (min-width: 768px) {
     .select-box {
@@ -366,14 +472,33 @@ table tbody td.changed {
 ul {
     margin-block-start: 4px;
     margin-block-end: 4px;
+    background-color: var(--surface) !important;
+    border-radius: 8px;
 }
 
 .select-box__current {
     position: relative;
-    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1); */
     cursor: pointer;
     outline: none;
+    background-color: transparent;
+    border-radius: 8px;
+    border: var(--border-weak) 1px solid;
+    transition-property: border-color;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out;
 }
+
+.select-box__current:focus {
+    border-color: var(--primary);
+    background-color: var(--surface);
+}
+
+.select-box__current:focus {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .select-box__current:focus + .select-box__list {
     opacity: 1;
     animation-name: none;
@@ -390,7 +515,6 @@ ul {
     right: 15px;
     transform: translateY(-50%);
     width: 20px;
-    opacity: 0.3;
     transition: 0.2s ease;
 }
 .select-box__value {
@@ -406,8 +530,8 @@ ul {
     display: none;
     width: 100%;
     margin: 0;
-    padding: 15px;
-    background-color: #fff;
+    padding: 16px;
+    background-color: transparent;
 }
 .select-box__list {
     position: absolute;
@@ -420,17 +544,36 @@ ul {
     animation-delay: 0.5s;
     animation-fill-mode: forwards;
     animation-timing-function: step-start;
-    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+    border: var(--border-weak) 1px solid;
+    /* box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1); */
+    border-radius: 8px;
 }
+
 .select-box__option {
     display: block;
-    padding: 15px;
-    background-color: #fff;
+    padding: 16px;
+    transition: all 0.2s ease-out;
+    /* background-color: var(--surface-mid);
+    background-color: var(--surface-mid-text); */
 }
-.select-box__option:hover, .select-box__option:focus {
-    color: #546c84;
-    background-color: #fbfbfb;
+
+.select-box__list li:hover {
+    color: black;
+    background-color: var(--primary-hover);
 }
+
+.select-box__list li:is(:first-child) {
+    border-radius: 8px 8px 0 0;
+}
+
+.select-box__list li:is(:last-child) {
+    border-radius: 0 0 8px 8px;
+}
+
+.select-box__option:has(> :checked) {
+    background-color: var(--primary-active);
+}
+
 @keyframes HideList {
     from {
         transform: scaleY(1);
@@ -446,16 +589,20 @@ ul {
       <div id="collectionSelect" class="select-box">
         <div class="select-box__current" tabindex="1">
           <div class="select-box__value"></div>
-          <img
-            aria-hidden="true"
+          <svg
+            width="18"
+            height="10"
             class="select-box__icon"
-            alt="Arrow Icon"
-            src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gU3ZnIFZlY3RvciBJY29ucyA6IGh0dHA6Ly93d3cub25saW5ld2ViZm9udHMuY29tL2ljb24gLS0+DQo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjU2IDI1NiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8bWV0YWRhdGE+IFN2ZyBWZWN0b3IgSWNvbnMgOiBodHRwOi8vd3d3Lm9ubGluZXdlYmZvbnRzLmNvbS9pY29uIDwvbWV0YWRhdGE+DQo8Zz48Zz48cGF0aCBmaWxsPSIjMDAwMDAwIiBkPSJNMTI4LDE5NC4zTDEwLDc2LjhsMTUuNS0xNS4xTDEyOCwxNjQuMkwyMzAuNSw2MS43TDI0Niw3Ni44TDEyOCwxOTQuM3oiLz48L2c+PC9nPg0KPC9zdmc+"
-          />
+            viewBox="0 0 18 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M1 1L9 9L17 1" stroke="currentColor" />
+          </svg>
         </div>
         <ul class="select-box__list"></ul>
       </div>
-      <button id="CSV" type="button" class="click">Generate CSV</button>
+      <button id="CSV" type="button" class="click">Generate</button>
     </div>
     <!-- <div class="row">
       <button id="JSON" type="button" class="click hidden">
@@ -466,11 +613,17 @@ ul {
       </button>
     </div> -->
   </form>
-  <textarea
-    placeholder="Exported variables will render here..."
-    readonly
-  ></textarea>
-  <div id="notice" class="error-box">
+  <div class="textarea-wrapper">
+    <div class="instructions">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="instructions-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <p>
+        Select a collection that contains string variables and click on <strong>Generate</strong>!
+      </p>
+      <p>Then, press <strong>Copy</strong> and paste it into a spreadsheet software.</p>
+    </div>
+    <textarea readonly></textarea>
+  </div>
+  <div id="notice" class="error-box hidden">
     <p>
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Recusandae quam
       earum animi, iste, dolor repudiandae dolore molestiae ut eius facere
@@ -479,7 +632,7 @@ ul {
     </p>
   </div>
   <div class="cta-wrapper">
-    <button id="copy" type="button" class="hidden">Copy</button>
+    <button disabled id="copy" type="button" class="cta">Copy</button>
   </div>
 </main>
 <script>
@@ -488,37 +641,32 @@ ul {
       const result = pluginMessage.result;
       let printedResult;
       let validResult = false;
-      if (
-        pluginMessage.fileType === "JSON" &&
-        JSON.parse(result).length === 0
-      ) {
-        printedResult = "No variables to export";
-      } else if (pluginMessage.fileType === "CSV") {
+      if (pluginMessage.fileType === "CSV") {
         const row = result.split("\n");
         if (row.length <= 1) {
-          printedResult = "No variables to export";
+          document.querySelector(".instructions").classList.remove("hidden");
+          document.querySelector("#copy").setAttribute("disabled", true);
+          notice("show", "BAD_COLLECTION");
+          document.querySelector("textarea").innerHTML = "";
         } else {
           printedResult = result;
           validResult = true;
         }
-      } else {
-        printedResult = result;
+      } 
+      /* else {
+        printedResult = result.replace(/,/g, "\t");
         validResult = true;
-      }
-      document.querySelector("textarea").innerHTML = printedResult;
+      } */
       if (validResult) {
-        document.querySelector("#copy").classList.remove("hidden");
+        document.querySelector("#copy").removeAttribute("disabled");
+        document.querySelector(".instructions").classList.add("hidden");
+        document.querySelector("textarea").innerHTML = printedResult;
+        notice("hide");
       }
     } else if (pluginMessage.type === "GET_COLLECTIONS") {
       console.log("GET_COLLECTIONS");
       const select = document.querySelector("#collectionSelect");
       pluginMessage.result.forEach((collection) => {
-        /* const option = document.createElement("option");
-        option.value = collection.id;
-        console.log(collection.id);
-        option.innerHTML = collection.name;
-        console.log(collection.name);
-        select.appendChild(option); */
         const index = pluginMessage.result.indexOf(collection);
 
         // radio button
@@ -548,35 +696,70 @@ ul {
         label.innerHTML = collection.name;
         labelWrapper.appendChild(label);
         labelTarget.appendChild(labelWrapper);
-
-        console.log(radioTarget.innerHTML);
-        console.log(labelTarget.innerHTML);
       });
       // set the value of the first radio button
       document.querySelector(".select-box__input").checked = "checked";
+    } else if (
+      pluginMessage.type === "NOTICE" &&
+      pluginMessage.result === "BAD_COLLECTION"
+    ) {
+      notice("show", pluginMessage.result);
+    } else {
+      notice("hide");
     }
   };
   //
+  function notice(display, message, changedCount) {
+    const noticeBox = document.querySelector("#notice");
+    switch (display) {
+      case "show":
+        noticeBox.classList.remove("hidden");
+        break;
+      case "hide":
+        noticeBox.classList.add("hidden");
+        break;
+    }
+    switch (message) {
+      case "BAD_COLLECTION":
+        noticeBox.classList.remove("info-box");
+        noticeBox.classList.add("error-box");
+        noticeBox.querySelector("p").textContent =
+          "This collection doesn't contain any string variables. Try another one!";
+        break;
+      default:
+        noticeBox.classList.remove("error-box");
+        noticeBox.classList.remove("info-box");
+    }
+  }
+  //
   document.querySelectorAll(".select-box__option").forEach((option) => {
     option.addEventListener("click", () => {
+      // TODO doesn't seem to work
       const select = document.querySelector(
         "#collectionSelect .select-box__input[name='collectionSelect']"
       );
       select.value = option.htmlFor;
-      // log the currently selected radio input value
-      console.log("Now selected:");
+      /* console.log("Now selected:");
       console.log(
         document.querySelector(
           "#collectionSelect .select-box__input[name='collectionSelect']:checked"
         ).value
-      );
+      ); */
     });
   });
   //
   document.querySelector("#copy").onclick = function () {
     document.querySelector("textarea").select();
     document.execCommand("copy");
-    // alert("Copied to clipboard");
+    // change the button text to say "Copied to clipboard!", give it a class of "copied" for 2 seconds and then revert back to "Copy" and remove the class
+    const initialLabel = this.innerHTML;
+    this.innerHTML = "Copied to clipboard!";
+    this.classList.add("success");
+    setTimeout(() => {
+      this.innerHTML = initialLabel;
+      this.classList.remove("success");
+      document.querySelector("textarea").blur();
+    }, 1000);
   };
   //
   const clickable = document.querySelectorAll(".click");

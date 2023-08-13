@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "gulp": "^4.0.2",
+    "gulp-imports": "^0.0.3",
     "gulp-inject": "^5.0.5",
     "gulp-replace": "^1.1.4",
     "gulp-watch": "^5.0.1"

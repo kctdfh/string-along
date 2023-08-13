@@ -1,3 +1,5 @@
+//import("./papaparse.min.js");
+
 console.clear();
 
 function updateVariablesWithJSONRepresentation(json) {
@@ -13,22 +15,20 @@ function updateVariablesWithJSONRepresentation(json) {
 
 function importJSONFile(body) {
   const json = JSON.parse(body);
-  console.log("IMPORT");
   updateVariablesWithJSONRepresentation(json);
-  console.log("Import finished");
 }
 
 function importCSVFile(body) {
-  const rows = body.split("\n");
-  console.log("IMPORT");
+  const parsed = Papa.parse(body, {
+    header: false
+  }).data;
   // remove the first row, which is the header
-  rows.shift();
+  parsed.shift();
   let variables = [];
-  rows.forEach((row) => {
-    const cells = row.split(",");
-    const variableID = cells[0].split("__")[0];
-    const modeId = cells[0].split("__")[1];
-    const value = cells[3];
+  parsed.forEach((row) => {
+    const variableID = row[0].split("__")[0];
+    const modeId = row[0].split("__")[1];
+    const value = row[3];
     const variable = variables.find(
       (variable) => variable.variableMeta.id === variableID
     );
@@ -55,27 +55,33 @@ function importCSVFile(body) {
   });
   updateVariablesWithJSONRepresentation(variables);
   console.log("Import finished");
+  figma.ui.postMessage({ type: "IMPORT_RESULT", result: "PASS" });
 }
 
 function exportToCSV(collectionId) {
-  console.log("export to csv");
+  console.log("Export started");
   const parsedCollection = parseCollectiontoFile(collectionId);
   let csv = [];
-  const header = "ID (do not change),Name,Mode,String";
-  csv.push(header);
   parsedCollection.forEach((variable) => {
     variable.modeValues.forEach((mode) => {
       const rowID = `${variable.variableMeta.id}__${mode.id}`;
-      const row = `${rowID},${variable.variableMeta.name},${mode.name},${mode.value}`;
+      const row = {
+        "ID (do not change)": rowID,
+        "Name": variable.variableMeta.name,
+        "Mode": mode.name,
+        "String": mode.value,
+      };
       csv.push(row);
     });
   });
-  csv = csv.join("\n");
+  csv = Papa.unparse(csv, {
+    delimiter: "\t",
+    header: true,
+  });
   figma.ui.postMessage({ type: "EXPORT_RESULT", fileType: "CSV", result: csv });
 }
 
 function exportToJSON(collectionId) {
-  console.log("export to json");
   const variables = parseCollectiontoFile(collectionId);
   figma.ui.postMessage({
     type: "EXPORT_RESULT",
@@ -85,8 +91,6 @@ function exportToJSON(collectionId) {
 }
 
 function getRootNote(nodeId) {
-  // starting from nodeId, traverse up the tree until you find a node where the parent attribute's id is 0:1
-  // return that node
   let node = figma.getNodeById(nodeId);
   let parent = node.parent;
   while (parent.id !== "0:1") {
@@ -97,6 +101,7 @@ function getRootNote(nodeId) {
 }
 
 function getNodesBoundToVariable(variableID) {
+  // NOTE Too slow. Hangs the UI. Need to find a better way to do this. For now, it's outscoped.
   let nodesArray = [];
   const figmaNodes = figma.currentPage.findAll((n) => {
     if (
@@ -128,6 +133,16 @@ function getAllCollections() {
   return collections;
 }
 
+function sanatizeString(string) {
+  if (
+    (string.startsWith(`'`) && string.endsWith(`'`)) ||
+    (string.startsWith(`"`) && string.endsWith(`"`))
+  ) {
+    string = string.slice(1, -1);
+  }
+  return string;
+}
+
 function compareUpdatedVariables(body) {
   const updatedVariables = [];
   console.log("COMPARE");
@@ -135,16 +150,19 @@ function compareUpdatedVariables(body) {
     const thisVariable = figma.variables.getVariableById(variable.variableID);
     if (thisVariable !== null) {
       let modeValue = thisVariable.valuesByMode[variable.modeId];
-      if (modeValue.trim() !== variable.value.trim()) {
+      if (sanatizeString(modeValue.trim()) !== sanatizeString(variable.value.trim())) {
         updatedVariables.push({
           variableID: variable.variableID.replace("VariableID:", ""),
           modeId: variable.modeId,
+          /* pastedValue: variable.value.trim(),
+          figmaValue: modeValue.trim(), */
         });
       }
     } else {
       console.log("VARIABLE NOT FOUND");
     }
   });
+  // console.log(updatedVariables);
   figma.ui.postMessage({
     type: "COMPARE_RESULT",
     result: JSON.stringify(updatedVariables),
@@ -167,6 +185,10 @@ function parseCollectiontoFile(collectionId) {
 // NOTE given a collection, returns its string variables as an array of objects
 function processCollection({ name, modes, variableIds, id }, collectionId) {
   if (collectionId !== undefined && collectionId !== id) {
+    figma.ui.postMessage({
+      type: "NOTICE",
+      result: "BAD_COLLECTION",
+    });
     return [];
   }
   const allVariableObjects = [];
@@ -212,7 +234,6 @@ function processCollection({ name, modes, variableIds, id }, collectionId) {
 // SECTION sending/receiving messages between plugin and code
 
 figma.ui.onmessage = (e) => {
-  // console.log("code received message", e);
   const submitter = e.submitter;
   const selectedCollectionID = e.collectionId;
   if (e.type === "IMPORT") {

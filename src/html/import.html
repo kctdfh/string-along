@@ -1,5 +1,6 @@
-<link rel="stylesheet" href="/src/css/main2.css" />
-<link rel="stylesheet" href="/src/css/import2.css" />
+<link rel="stylesheet" href="/src/css/theme.css" />
+<link rel="stylesheet" href="/src/css/main.css" />
+<link rel="stylesheet" href="/src/css/import.css" />
 
 <div class="body-wrapper">
   <div class="toggle-wrapper" data-selected="textarea">
@@ -11,7 +12,7 @@
         value="textarea"
         checked
       />
-      <label for="textarea">Paste table</label>
+      <label for="textarea">Paste CSV</label>
     </div>
     <div class="segment-wrapper tablepreview">
       <input
@@ -21,14 +22,22 @@
         value="tablepreview"
         disabled=""
       />
-      <label for="tablepreview">Table preview</label>
+      <label for="tablepreview">Preview</label>
     </div>
     <div class="selector-indicator"></div>
   </div>
   <form>
     <div class="textarea-wrapper">
       <div class="instructions">
-        <p>First, paste your CSV here!</p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="instructions-icon"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+        <p>
+          First, paste your CSV here!
+        </p>
+        <p>
+          Then you can preview any changes by clicking on the
+          <strong>Preview</strong>
+          tab.
+        </p>
       </div>
       <textarea required></textarea>
     </div>
@@ -43,17 +52,18 @@
     </div>
     <div class="cta-wrapper">
       <!-- <button id="JSON" type="submit" class="hidden">Import JSON</button> -->
-      <button disabled id="CSV" type="submit">Update Variables from CSV</button>
+      <button disabled id="CSV" class="cta" type="submit">
+        Import variables
+      </button>
     </div>
   </form>
 </div>
-
+<script src="./papaparse.min.js"></script>
 <!-- <form>
   <textarea required placeholder="Variables"></textarea>
   <button id="JSON" type="submit" class="hidden">Import JSON</button>
   <button id="CSV" type="submit">Update Variables from CSV</button>
 </form> -->
-
 <script>
   // attach a listener to every input of type radio with the name "view-type". When the value changes, update the data-selected attribute of the .toggle-wrapper element to the value of the selected radio button, only if the nearest parent with the class "segment-wrapper" has a data-valid attribute of "true". Otherwise alert the user that the input is invalid.
   document
@@ -66,27 +76,10 @@
           e.target.value;
         // if the value is table-preview, hide the textarea-wrapper element and show the table-preview element. Otherwise, hide the table-preview element and show the textarea-wrapper element.
         if (e.target.value === "tablepreview") {
-          console.log(`tablepreview selected`);
           document.querySelector(".textarea-wrapper").classList.add("hidden");
           document
             .querySelector(".tablepreview-wrapper")
             .classList.remove("hidden");
-          /* let hasChanges = document.querySelector(
-              `.changed.value[data-variableid][data-modeid]`
-            )
-              ? true
-              : false;
-            let changesCount = 0;
-            if (hasChanges === true) {
-              changesCount = document.querySelectorAll(
-                `.changed.value[data-variableid][data-modeid]`
-              ).length;
-              console.log(`changesCount: ${changesCount}`);
-              notice("show", "hasChanges", changesCount);
-            } else {
-              console.log(`no changes`);
-              notice("hide");
-            } */
         } else {
           document
             .querySelector(".textarea-wrapper")
@@ -113,70 +106,100 @@
         document
           .querySelector(".textarea-wrapper .instructions")
           .classList.remove("hidden");
+        invalidCSV(e.target.value.trim());
+      }
+    });
+  document
+    .querySelector(".textarea-wrapper textarea")
+    .addEventListener("focus", (e) => {
+      if (e.target.value.trim() === "") {
+        invalidCSV(e.target.value.trim());
       }
     });
   // when the value of the textarea element inside of the .textarea-wrapper element changes, test if it's a comma delimited csv, tab delimited csv, or neither.If it's a valid csv, add the class .hidden to the #notice element, call the "CSVtoTable(delimiter)" function, and remove the "disabled" attribute from the #CSV button. If it's not a valid csv, remove the class .hidden from the #notice element and add the attribute "disabled" to the #CSV button.
   document
     .querySelector(".textarea-wrapper textarea")
     .addEventListener("input", (e) => {
-      console.log("input event");
       let body = e.target.value.trim();
       validateCSV(body);
     });
   //
-  function validateCSV(body) {
-    console.log("validating csv");
-    const pastedContent = body.replace(
-      /\t(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/g,
-      ","
-    );
-    const rows = pastedContent.split(/\r?\n/);
-    const columnCount = rows[0].split(",").length;
-    let validCSV = true;
-    rows.forEach((row) => {
-      let columns = row.split(",");
-      if (columns.length < columnCount) {
-        validCSV = false;
-      }
-    });
-    let tableElement = document.querySelector(".tablepreview-wrapper");
+  function validateCSV(body, respond = false) {
+    const tableElement = document.querySelector(".tablepreview-wrapper");
+    const textareaElement = document.querySelector("textarea");
+    const parsed = Papa.parse(body);
+    const pastedContent = body;
+    let validCSV = parsed.errors.length === 0 ? true : false;
 
-    // if "pastedContent" has no commas, it's not a valid csv.
-    if (
-      pastedContent.indexOf(",") === -1 ||
-      pastedContent.length === 0 ||
-      pastedContent.indexOf("\n") === -1
-    ) {
+    // if the body doesn't begin with "ID (do not change)", it's not a valid csv
+    if (!body.startsWith("ID (do not change)")) {
       validCSV = false;
     }
 
+    if (respond) {
+      return validCSV;
+    }
+
     if (validCSV) {
-      console.log("valid csv");
+      console.log("Valid CSV");
       CSVtoTable(pastedContent, tableElement);
       // is valid csv
       notice("hide");
       document.querySelector("#CSV").removeAttribute("disabled");
       document.querySelector("#tablepreview").removeAttribute("disabled");
     } else {
+      console.log("Invalid CSV");
       invalidCSV(pastedContent);
     }
   }
   //
   function invalidCSV(body) {
-    if (body.trim().length < 1) {
-      document.querySelector("#tablepreview").setAttribute("disabled", "");
-      notice("hide");
-      return;
-    }
-    console.log("invalid csv");
-    notice("show", "invalidCSV");
-    document.querySelector("#CSV").setAttribute("disabled", "");
     document.querySelector("#tablepreview").setAttribute("disabled", "");
+    document.querySelector("#CSV").setAttribute("disabled", "");
+    if (body.trim().length < 1) {
+      notice("hide");
+    } else {
+      notice("show", "invalidCSV");
+    }
+  }
+  //
+  function sanatizeString(string) {
+    if (
+      (string.startsWith(`'`) && string.endsWith(`'`)) ||
+      (string.startsWith(`"`) && string.endsWith(`"`))
+    ) {
+      string = string.slice(1, -1);
+    }
+    // if string has multiple quotes of any kind, replace them with a single quote of the same kind
+    string = string.replace(/["]{2,}/g, (match) => {
+      return match[0];
+    });
+    return string;
+  }
+  //
+  function stringToHTMLinnerText(string) {
+    const replacements = {
+      '"': "&quot;",
+      "'": "&apos;",
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\n": "<br>",
+      "\t": "&nbsp;&nbsp;&nbsp;&nbsp;",
+      " ": "&nbsp;",
+    };
+
+    return string.replace(/["'&<>\n\t ]/g, (match) => replacements[match]);
   }
   //
   function CSVtoTable(csv, tableElement) {
+    // TODO use Papa.parse to parse the csv and turn it into a table
     let newLineRegex = /\n(?=V)/g;
-    let delimiterRegex = /,(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/g;
+    const delimiter = Papa.parse(csv).meta.delimiter;
+    let delimiterRegex = new RegExp(
+      `${delimiter}(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)`,
+      "g"
+    );
     let rows = csv.split(newLineRegex);
     let table = document.createElement("table");
     let tableBody = document.createElement("tbody");
@@ -208,7 +231,7 @@
         }
         let tableCell = document.createElement("td");
         // tableCell.textContent = cells[i] + "" + identifier;
-        tableCell.textContent = cells[i];
+        tableCell.innerHTML = stringToHTMLinnerText(sanatizeString(cells[i]));
         if (i > 1) {
           tableCell.classList.add("value");
           tableCell.setAttribute("data-variableid", variableID);
@@ -225,7 +248,28 @@
   }
   //
   function findChanges() {
-    let values = document.querySelectorAll("table .value");
+    // based on actual pasted values
+    const pastedValue = document.querySelector("textarea").value.trim();
+    const parsed = Papa.parse(pastedValue, {
+      header: false,
+    }).data;
+    parsed.shift();
+    let body = [];
+    parsed.forEach((row) => {
+      let variableID = row[0].split("__")[0].replace("VariableID:", "");
+      let modeId = row[0].split("__")[1];
+      let newValue = row.reverse()[0];
+      let variable = {
+        variableID: "VariableID:" + variableID,
+        modeId: modeId,
+        value: newValue,
+      };
+      body.push(variable);
+    });
+
+
+    // based on table values
+    /* let values = document.querySelectorAll("table .value");
     let body = [];
     values.forEach((value) => {
       let variableID = value.getAttribute("data-variableid");
@@ -237,7 +281,7 @@
         value: newValue,
       };
       body.push(variable);
-    });
+    }); */
     parent.postMessage(
       {
         pluginMessage: {
@@ -261,11 +305,13 @@
     }
     switch (message) {
       case "hasChanges":
+        let plural = changedCount === 1 ? "" : "s";
+        //
         noticeBox.classList.add("info-box");
         noticeBox.classList.remove("error-box");
         noticeBox.querySelector(
           "p"
-        ).textContent = `${changedCount} variables have been updated. They're highlighted here for you to check!`;
+        ).textContent = `${changedCount} string${plural} will be updated.`;
         break;
       case "invalidCSV":
         noticeBox.classList.add("error-box");
@@ -304,19 +350,30 @@
   // when a message is received from the plugin code
   onmessage = (event) => {
     const message = event.data.pluginMessage;
+    console.log(message.type)
     // if the message is of type "COMPARE_RESULT"
     if (message.type === "COMPARE_RESULT") {
-      console.log("COMPARE_RESULT");
       displayChanges(message.result);
+    } else if (message.type === "IMPORT_RESULT" && message.result === "PASS") {
+      const csvButton = document.querySelector("#CSV");
+      const initialLabel = csvButton.innerHTML;
+      csvButton.innerHTML = "Imported!";
+      csvButton.classList.add("success");
+      validateCSV(document.querySelector("textarea").value.trim());
+      setTimeout(() => {
+        csvButton.innerHTML = initialLabel;
+        csvButton.classList.remove("success");
+        document.querySelector("textarea").blur();
+      }, 1000);
     }
   };
   //
   document.querySelector("form").addEventListener("submit", (e) => {
     // if the button that was pressed has the ID of "json"
-    let submitter = e.submitter.id;
+    const submitter = e.submitter.id;
     const body = document.querySelector("textarea").value.trim();
     e.preventDefault();
-    if (submitter === "JSON") {
+    /* if (submitter === "JSON") {
       if (isValidJSON(body)) {
         parent.postMessage(
           {
@@ -331,8 +388,9 @@
       } else {
         alert("Invalid JSON");
       }
-    } else if (submitter === "CSV") {
-      if (isValidCSV(body)) {
+    } else */
+    if (submitter === "CSV") {
+      if (validateCSV(body, true)) {
         parent.postMessage(
           {
             pluginMessage: {
@@ -348,34 +406,4 @@
       }
     }
   });
-
-  function isValidJSON(body) {
-    try {
-      JSON.parse(body);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function isValidCSV(body) {
-    try {
-      let csv = body.split("\n");
-      let headers = csv[0].split(",");
-      let rows = csv.slice(1);
-      if (headers.length < 2) {
-        return false;
-      }
-      for (let i = 0; i < rows.length; i++) {
-        let row = rows[i].split(",");
-        if (row.length !== headers.length) {
-          return false;
-        }
-      }
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
-  }
 </script>
