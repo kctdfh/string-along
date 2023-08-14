@@ -113,6 +113,12 @@ ul {
     background-color: var(--surface-mid-text); */
 }
 
+.select-box__list li.selected {
+    /* background-color: var(--primary); */
+    color: var(--primary);
+    font-weight: 600;
+}
+
 .select-box__list li:hover {
     color: black;
     background-color: var(--primary-hover);

@@ -34,11 +34,32 @@
   </form>
   <div class="textarea-wrapper">
     <div class="instructions">
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="instructions-icon"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="instructions-icon"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
       <p>
-        Select a collection that contains string variables and click on <strong>Generate</strong>!
+        Select a collection that contains string variables and click on
+        <strong>Generate</strong>
+        !
       </p>
-      <p>Then, press <strong>Copy</strong> and paste it into a spreadsheet software.</p>
+      <p>
+        Then, press
+        <strong>Copy</strong>
+        and paste it into a spreadsheet software.
+      </p>
     </div>
     <textarea readonly></textarea>
   </div>
@@ -71,7 +92,7 @@
           printedResult = result;
           validResult = true;
         }
-      } 
+      }
       /* else {
         printedResult = result.replace(/,/g, "\t");
         validResult = true;
@@ -115,9 +136,25 @@
         label.innerHTML = collection.name;
         labelWrapper.appendChild(label);
         labelTarget.appendChild(labelWrapper);
+
+        document.querySelectorAll("li").forEach((option) => {
+          option.addEventListener("click", () => {
+            document.querySelectorAll("li").forEach((option) => {
+              option.classList.remove("selected");
+            });
+            option.classList.add("selected");
+          });
+        });
       });
-      // set the value of the first radio button
       document.querySelector(".select-box__input").checked = "checked";
+      const firstCollection = document.querySelector(
+        ".select-box__input[name='collectionSelect']:checked"
+      ).value;
+      document.querySelectorAll("li").forEach((option) => {
+        if (option.querySelector("label").htmlFor === firstCollection) {
+          option.classList.add("selected");
+        }
+      });
     } else if (
       pluginMessage.type === "NOTICE" &&
       pluginMessage.result === "BAD_COLLECTION"
@@ -150,22 +187,6 @@
         noticeBox.classList.remove("info-box");
     }
   }
-  //
-  document.querySelectorAll(".select-box__option").forEach((option) => {
-    option.addEventListener("click", () => {
-      // TODO doesn't seem to work
-      const select = document.querySelector(
-        "#collectionSelect .select-box__input[name='collectionSelect']"
-      );
-      select.value = option.htmlFor;
-      /* console.log("Now selected:");
-      console.log(
-        document.querySelector(
-          "#collectionSelect .select-box__input[name='collectionSelect']:checked"
-        ).value
-      ); */
-    });
-  });
   //
   document.querySelector("#copy").onclick = function () {
     document.querySelector("textarea").select();

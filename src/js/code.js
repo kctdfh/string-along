@@ -19,16 +19,26 @@ function importJSONFile(body) {
 }
 
 function importCSVFile(body) {
-  const parsed = Papa.parse(body, {
-    header: false
+  const pastedValue = body.trim();
+  const parsed = Papa.parse(pastedValue, {
+    header: true,
+    transformHeader: (header) => {
+      let newHeader = header.trim().replace(/ /g, "").replace(/\)/g, "").replace(/\(/g, "").toLowerCase();
+      if (newHeader === "iddonotchange") {
+        newHeader = "idcolumn";
+      }
+      return newHeader;
+    }
   }).data;
-  // remove the first row, which is the header
-  parsed.shift();
   let variables = [];
-  parsed.forEach((row) => {
-    const variableID = row[0].split("__")[0];
-    const modeId = row[0].split("__")[1];
-    const value = row[3];
+  for (let index = 0; index < parsed.length; index++) {
+    const row = parsed[index];
+    if (row.string === undefined) {
+      row.string = "";
+    }
+    const variableID = row.idcolumn.split("__")[0];
+    const modeId = row.idcolumn.split("__")[1];
+    const value = row.string ? row.string : "";
     const variable = variables.find(
       (variable) => variable.variableMeta.id === variableID
     );
@@ -52,7 +62,7 @@ function importCSVFile(body) {
         ],
       });
     }
-  });
+  }
   updateVariablesWithJSONRepresentation(variables);
   console.log("Import finished");
   figma.ui.postMessage({ type: "IMPORT_RESULT", result: "PASS" });
@@ -67,9 +77,9 @@ function exportToCSV(collectionId) {
       const rowID = `${variable.variableMeta.id}__${mode.id}`;
       const row = {
         "ID (do not change)": rowID,
-        "Name": variable.variableMeta.name,
-        "Mode": mode.name,
-        "String": mode.value,
+        Name: variable.variableMeta.name,
+        Mode: mode.name,
+        String: mode.value,
       };
       csv.push(row);
     });
@@ -145,24 +155,25 @@ function sanatizeString(string) {
 
 function compareUpdatedVariables(body) {
   const updatedVariables = [];
-  console.log("COMPARE");
   body.forEach((variable) => {
     const thisVariable = figma.variables.getVariableById(variable.variableID);
     if (thisVariable !== null) {
       let modeValue = thisVariable.valuesByMode[variable.modeId];
-      if (sanatizeString(modeValue.trim()) !== sanatizeString(variable.value.trim())) {
+      if (
+        sanatizeString(modeValue) !==
+        sanatizeString(variable.value)
+      ) {
         updatedVariables.push({
           variableID: variable.variableID.replace("VariableID:", ""),
           modeId: variable.modeId,
-          /* pastedValue: variable.value.trim(),
-          figmaValue: modeValue.trim(), */
+          pastedValue: variable.value,
+          figmaValue: modeValue,
         });
       }
     } else {
       console.log("VARIABLE NOT FOUND");
     }
   });
-  // console.log(updatedVariables);
   figma.ui.postMessage({
     type: "COMPARE_RESULT",
     result: JSON.stringify(updatedVariables),

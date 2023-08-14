@@ -29,10 +29,24 @@
   <form>
     <div class="textarea-wrapper">
       <div class="instructions">
-        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="instructions-icon"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-        <p>
-          First, paste your CSV here!
-        </p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="instructions-icon"
+        >
+          <path
+            d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+          ></path>
+          <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+        </svg>
+        <p>First, paste your CSV here!</p>
         <p>
           Then you can preview any changes by clicking on the
           <strong>Preview</strong>
@@ -127,13 +141,32 @@
   function validateCSV(body, respond = false) {
     const tableElement = document.querySelector(".tablepreview-wrapper");
     const textareaElement = document.querySelector("textarea");
-    const parsed = Papa.parse(body);
+    const parsed = Papa.parse(body, {
+      header: true,
+    });
     const pastedContent = body;
-    let validCSV = parsed.errors.length === 0 ? true : false;
+    let validCSV = true;
 
-    // if the body doesn't begin with "ID (do not change)", it's not a valid csv
-    if (!body.startsWith("ID (do not change)")) {
+    // for making sure we still accept the csv if the string column is missing for a specific mode
+    const parseError = function (error) {
+      let errorsArray = [];
+      if (error.length > 0) {
+        errorsArray = error.filter((error) => error.code !== "TooFewFields");
+      }
+      return errorsArray.length;
+    };
+
+    const hasErrors = parseError(parsed.errors) > 0 ? true : false;
+    const noData = parsed.data.length === 0 ? true : false;
+    const noRequiredHeaders =
+      parsed.meta.fields.indexOf("ID (do not change)") === -1 ||
+      parsed.meta.fields.indexOf("String") === -1
+        ? true
+        : false;
+
+    if (hasErrors || noData || noRequiredHeaders) {
       validCSV = false;
+      console.log(hasErrors, noData, noRequiredHeaders);
     }
 
     if (respond) {
@@ -251,22 +284,20 @@
     // based on actual pasted values
     const pastedValue = document.querySelector("textarea").value.trim();
     const parsed = Papa.parse(pastedValue, {
-      header: false,
+      header: true,
     }).data;
-    parsed.shift();
     let body = [];
     parsed.forEach((row) => {
-      let variableID = row[0].split("__")[0].replace("VariableID:", "");
-      let modeId = row[0].split("__")[1];
-      let newValue = row.reverse()[0];
+      let variableID = row["ID (do not change)"].split("__")[0];
+      let modeId = row["ID (do not change)"].split("__")[1];
+      let newValue = row["String"] ? row["String"] : "";
       let variable = {
-        variableID: "VariableID:" + variableID,
+        variableID: variableID,
         modeId: modeId,
         value: newValue,
       };
       body.push(variable);
     });
-
 
     // based on table values
     /* let values = document.querySelectorAll("table .value");
@@ -350,7 +381,7 @@
   // when a message is received from the plugin code
   onmessage = (event) => {
     const message = event.data.pluginMessage;
-    console.log(message.type)
+    console.log(message.type);
     // if the message is of type "COMPARE_RESULT"
     if (message.type === "COMPARE_RESULT") {
       displayChanges(message.result);
