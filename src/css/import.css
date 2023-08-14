@@ -73,7 +73,7 @@
 } */
 
 .toggle-wrapper .segment-wrapper input[disabled] + label {
-  color: var(--surface-hight);
+  color: var(--surface-high);
   cursor: not-allowed !important;
 }
 
