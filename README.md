@@ -1,14 +1,9 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a name="readme-top"></a>
+
 <!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
+*** ReadMe template provided by Best-README-Template.
 -->
-
-
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -31,7 +26,7 @@
 <br />
 <div align="center">
   <a href="{figma}">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="./src/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">String-along</h3>
@@ -39,16 +34,17 @@
   <p align="center">
     Export/import your Figma string variables to and from any spreadsheet app.
     <br />
-    <a href="{figma}"><strong>Install it through the Figma Community »</strong></a>
+    <a href="{figma}"><strong>Figma Community page »</strong></a>
     <br />
     <br />
-    <a href="{demo}">Watch Demo Video</a>
+    <a href="{demo}">Watch the Demo</a>
     ·
-    <a href="{repo}/issues">Report Bug</a>
+    <a href="https://github.com/kctdfh/string-along/issues">Report a Bug</a>
     ·
-    <a href="{repo}/issues">Request Feature</a>
+    <a href="https://github.com/kctdfh/string-along/issues">Request a Feature</a>
   </p>
 </div>
+
 
 
 
@@ -69,26 +65,55 @@
 
 
 
+
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]]({screenshot})
+<img src="./src/images/cover_gh.png" alt="Screenshot of the plugin"></img>
 
-EXPLAIN
+<i>String-along</i> is a convenient Figma plugin designed to streamline the management of string variables within your design projects. With <i>String-along</i>, you can effortlessly export your string variables to a spreadsheet-compatible format, make edits or translations, and seamlessly import them back into Figma.
 
-Here's why:
-* BULLET
-* BULLET
-* BULLET
+By providing a seamless bridge between Figma and your preferred spreadsheet software, <i>String-along</i> empowers you to efficiently manage and update text content across your designs. Whether you're working on a website localization project, updating copy for multiple screens, or simply need an organized way to collaborate on content design, <i>String-along</i> has you covered.
 
-EXPLAIN
+Features:
+
+1. **Select any collection:** Easily export string variables from any of your collections in Figma. You have the flexibility to select the collections you want to export string variables from. As long as the collection has at lease one string variable, you can export their values with one click.
+
+2. **Copy/paste friendly formatting:** The exported text is formatted in a way that allows you to directly paste it into any spreadsheet software of your choice. No cloud-tool authentication required. Effortlessly copy and paste the exported content into your spreadsheet and start editing.
+
+3. **Simple Import:** Once you have made the necessary edits or translations in your spreadsheet, importing the updated values back into Figma is a breeze. Simply select the rows and columns containing the updated values, and copy/paste them directly into the <i>String-along</i> plugin. It will recognize the structure and map the values back to their respective string variables in Figma.
+
+4. **Flexible Delimiter Support:** <i>String-along</i> offers the flexibility to choose any delimiter of your preference. Whether you prefer commas, tabs, or semicolons, <i>String-along</i> is designed to adapt to whatever you paste into it.
+
+5. **Preview your changes:** When you paste your updated variables, the plugin will provide you with a tabular preview of the variable values and highlighting the values that will be updated.
+
+6. **Support for line-breaks, punctuation, etc.:** Need a newline in your string? Want to use a punctuation that may or may not break a basic CSV parser? <i>String-along</i> handles all of these with no issues... that I know of! If you find one, <a href="https://github.com/kctdfh/string-along/issues">report it</a> please.
+
+Limitations:
+
+1. **Import Schema:** Currently, the import feature in <i>String-along</i> only supports the column schema of the exported spreadsheet. It means that you cannot upload any arbitrary spreadsheet for importing. The structure of the spreadsheet should match the exported schema.
+
+2. **Creating Modes and/or Variables on Import**: Right now, the plugin only works as a way to update your existing variables. You can't create a new "mode" or a new variable at the same time as you import.
+
+3. **Variable Aliases:** <i>String-along</i> does not fully support variable aliases at the moment. While the plugin allows you to export and import string variables, it may not handle aliases as expected. Open an <a href="https://github.com/kctdfh/string-along/issues">issue</a> if this is a deal-breaker for your use-case.
+
+4. **Error Descriptions:** The error messages provided by <i>String-along</i> are not as descriptive as they could be. I'm working on improving the error handling to provide more detailed and useful descriptions.
+
+5. **Component Text Field Limitation:** Unfortunately, Figma itself has a limitation where variables cannot be attached to component text fields. This limitation is inherent to Figma and not specific to <i>String-along</i> but it's worth mentioning. For more information on this limitation, you can refer to the discussion {here}.
+
+As Figma's variable functionality evolves and the API reaches its final version, addressing these limitations will become a priority.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 
 <!-- GETTING STARTED -->
 # Getting Started
 
-EXPLAIN
+* **Install it:** Click on <a href="{figma}">this</a> link and "Install" the plugin.
+
+* **Run it:** You can either click on "Resources" in the toolbar, then select the "Plugins" tab, and search for "<i>String-along</i>". Or you can right-click anywhere on the canvas, hover your cursor over "Plugins" to open a list of all the plugins you've installed on Figma, and click on <i>String-along</i>. OR press `Command + /` or `Ctrl + /` and type <i>String-along</i>. If the plugin is already installed, each of its commands will appear for you to run.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -97,7 +122,11 @@ EXPLAIN
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-EXPLAIN FORMATTING
+* **Export:** Select the "Export string variables" plugin command. When the modal opens, select the collection you want to export from the dropdown input on the top-left and then click on "Generate". The resulting spreadsheet-compatible format of your string variables can be copied to your clipboard by clicking on the... well, giant "Copy" button!
+
+* **Edit your variabled:** Go to your spreadsheet software, paste the variables, and get to editing. It's important that you don't change, edit, or add to the column headers. For now, you can only edit or remove any cell in the "String" column.
+
+* **Import:** Copy your updated columns and cell and run the "Import string variables" plugin command. Click on the text area and paste it. If the parsing goes well, the "Preview" tab will be enabled. You can use it to check the parsing and see what is going to change when you click on "Import". Then you can go ahead and do just that to update your variables.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -107,13 +136,17 @@ EXPLAIN FORMATTING
 ## Roadmap
 
 ### Pre-1.0
-- [x] EXPLAIN
-- [x] EXPLAIN
-- [ ] EXPLAIN
-- [ ] EXPLAIN
-### V 1.0
-- [ ] EXPLAIN
-- [ ] EXPLAIN
+- [ ] Update the theme to match Figma's styling.
+- [ ] Refactor the code to make it more contributor friendly.
+- [ ] More descriptive errors.
+- [ ] (Considering) Ability to export annotated frame PNGs of where each string variable is used.
+
+### V 1.0 (after variables are out of beta)
+- [ ] Re-write in Typescript and maybe move to Svelte for more sensible code-splitting.
+
+### Future
+- [ ] Create modes and variables on import.
+- [ ] Arbitrary import schema support.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -122,9 +155,7 @@ EXPLAIN FORMATTING
 <!-- CONTRIBUTING -->
 ## Contributing
 
-PULLS WELCOME
-GRUNT BASIC
-CODE ATROCIOUS
+Right now the code is in a "designer larping as developer" state. If you promise not to shame my abilities, you can fork the project, build your changes using `npm build`, and send a pull request. Bundling is done using Grunt and a few plugins for injecting CSS and JS.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -139,30 +170,12 @@ Distributed under the MIT License.
 
 
 
-<!-- CONTACT -->
-## Contact
-
-Say hi: email@example.com
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
+<!-- ## Acknowledgments
 
-EDIT
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">back to top</a>)</p> -->
 
 
 
