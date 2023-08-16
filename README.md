@@ -99,7 +99,7 @@ Limitations:
 
 4. **Error Descriptions:** The error messages provided by <i>String-along</i> are not as descriptive as they could be. I'm working on improving the error handling to provide more detailed and useful descriptions.
 
-5. **Component Text Field Limitation:** Unfortunately, Figma itself has a limitation (as of now) where variables cannot be attached to component text fields. This limitation is inherent to Figma and not specific to <i>String-along</i> but it's worth mentioning. For more information on this limitation, you can refer to <a href="https://forum.figma.com/t/allow-assigning-string-variables-to-text-props-in-component-instances/45665">this</a> discussion.
+5. **Components' Text Property Limitation:** Unfortunately, Figma itself has a limitation (as of now) where variables cannot be attached to component text props. This limitation is inherent to Figma and not specific to <i>String-along</i> but it's worth mentioning. For more information, you can refer to <a href="https://forum.figma.com/t/allow-assigning-string-variables-to-text-props-in-component-instances/45665">this</a> discussion.
 
 As Figma's variable functionality evolves and the API reaches its final version, addressing these limitations will become a priority.
 
