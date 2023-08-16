@@ -25,7 +25,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="{figma}">
+  <a href="https://www.figma.com/community/plugin/1273436886618882210/String-along">
     <img src="./src/images/Logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -34,10 +34,10 @@
   <p align="center">
     Export/import your Figma string variables to and from any spreadsheet app.
     <br />
-    <a href="{figma}"><strong>Figma Community page »</strong></a>
+    <a href="https://www.figma.com/community/plugin/1273436886618882210/String-along"><strong>Figma Community page »</strong></a>
     <br />
     <br />
-    <a href="{demo}">Watch the Demo</a>
+    <a href="{demo}">Watch the Demo (coming soon)</a>
     ·
     <a href="https://github.com/kctdfh/string-along/issues">Report a Bug</a>
     ·
@@ -99,7 +99,7 @@ Limitations:
 
 4. **Error Descriptions:** The error messages provided by <i>String-along</i> are not as descriptive as they could be. I'm working on improving the error handling to provide more detailed and useful descriptions.
 
-5. **Component Text Field Limitation:** Unfortunately, Figma itself has a limitation where variables cannot be attached to component text fields. This limitation is inherent to Figma and not specific to <i>String-along</i> but it's worth mentioning. For more information on this limitation, you can refer to the discussion {here}.
+5. **Component Text Field Limitation:** Unfortunately, Figma itself has a limitation (as of now) where variables cannot be attached to component text fields. This limitation is inherent to Figma and not specific to <i>String-along</i> but it's worth mentioning. For more information on this limitation, you can refer to <a href="https://forum.figma.com/t/allow-assigning-string-variables-to-text-props-in-component-instances/45665">this</a> discussion.
 
 As Figma's variable functionality evolves and the API reaches its final version, addressing these limitations will become a priority.
 
@@ -110,7 +110,7 @@ As Figma's variable functionality evolves and the API reaches its final version,
 <!-- GETTING STARTED -->
 # Getting Started
 
-* **Install it:** Click on <a href="{figma}">this</a> link and "Install" the plugin.
+* **Install it:** Go to <a href="https://www.figma.com/community/plugin/1273436886618882210/String-along">this</a> page and click on "Try it out".
 
 * **Run it:** You can either click on "Resources" in the toolbar, then select the "Plugins" tab, and search for "<i>String-along</i>". Or you can right-click anywhere on the canvas, hover your cursor over "Plugins" to open a list of all the plugins you've installed on Figma, and click on <i>String-along</i>. OR press `Command + /` or `Ctrl + /` and type <i>String-along</i>. If the plugin is already installed, each of its commands will appear for you to run.
 
@@ -124,9 +124,9 @@ As Figma's variable functionality evolves and the API reaches its final version,
 
 * **Export:** Select the "Export string variables" plugin command. When the modal opens, select the collection you want to export from the dropdown input on the top-left and then click on "Generate". The resulting spreadsheet-compatible format of your string variables can be copied to your clipboard by clicking on the... well, giant "Copy" button!
 
-* **Edit your variabled:** Go to your spreadsheet software, paste the variables, and get to editing. It's important that you don't change, edit, or add to the column headers. For now, you can only edit or remove any cell in the "String" column.
+* **Edit your variables:** Go to your spreadsheet software, paste the variables, and get to editing. It's important that you don't change, edit, or add to the column headers. For now, you can only edit or remove any cell in the "String" column.
 
-* **Import:** Copy your updated columns and cell and run the "Import string variables" plugin command. Click on the text area and paste it. If the parsing goes well, the "Preview" tab will be enabled. You can use it to check the parsing and see what is going to change when you click on "Import". Then you can go ahead and do just that to update your variables.
+* **Import:** Copy your updated columns and cells and run the "Import string variables" plugin command. Click on the text area and paste it. If the parsing goes well, the "Preview" tab will be enabled. You can use it to check the parsing and see what is going to change when you click on "Import". Then you can go ahead and do just that to update your variables.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
