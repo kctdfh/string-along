@@ -1,16 +1,19 @@
 {
-  "name": "Import Export String Variables",
-  "id": "1225498390710809905",
+  "name": "String-along",
+  "id": "1273436886618882210",
   "api": "1.0.0",
   "editorType": ["figma"],
   "permissions": [],
   "main": "./dist/code.js",
   "menu": [
-    { "command": "import", "name": "Import String Variables" },
-    { "command": "export", "name": "Export String Variables" }
+    { "command": "import", "name": "Import string variables" },
+    { "command": "export", "name": "Export string variables" }
   ],
   "ui": { 
     "import": "./dist/import.html", 
     "export": "./dist/export.html"
+  },
+  "networkAccess": {
+    "allowedDomains": ["none"]
   }
 }
