@@ -462,6 +462,7 @@ function annotateNodesWithVariable(nodesArray) {
       const rootNode = figma.getNodeById(node.rootNode);
       const rootNodeName = rootNode.name;
       const rootNodeID = rootNode.id;
+      console.log(`rootNodeID: ${rootNodeID}`)
       const allNodes = nodesArray
         .filter((node) => {
           if (node.rootNode === rootNodeID) {
