@@ -122,7 +122,7 @@ function exportToJSON(collectionId) {
 function getRootNode(nodeId) {
   let node = figma.getNodeById(nodeId);
   let parent = node.parent;
-  while (parent !== null && parent.id !== "0:1") {
+  while (parent !== null && parent.id !== "0:1" && parent.type !== "PAGE" && parent.id !== "0:0") {
     node = parent;
     parent = node.parent;
   }
