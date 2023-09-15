@@ -107,7 +107,6 @@ function exportToCSV(collectionId) {
     header: true,
   });
   getNodesBoundToVariable(variableIDs);
-  exportRootNodeScreenshot();
   figma.ui.postMessage({ type: "EXPORT_RESULT", fileType: "CSV", result: csv });
 }
 
@@ -171,12 +170,17 @@ function isCollide(a, b) {
   };
   if (val.collision) {
     // area of the intersection, which is a rectangle too:
-    const SI = Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y));
+    const SI =
+      Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x)) *
+      Math.max(
+        0,
+        Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y)
+      );
     // area of the union:
     const SU = a.width * a.height + b.width * b.height - SI;
     // ratio of intersection over union:
     val.overlap = SI / SU;
-    
+
     // bad approaches
     // val.overlap = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
     // val.overlap = (a.width + b.width) / 2 - Math.abs(a.x - b.x);
@@ -443,26 +447,36 @@ function annotateNodesWithVariable(nodesArray) {
     return acc;
   }, {});
   aggregatedNodes = Object.values(aggregatedNodes);
-  console.log(aggregatedNodes.length)
-  aggregatedNodes.forEach((nodesArray) => {
-    console.log(nodesArray.length)
+  // TODO to make sure the annotations are fully done before screenshots are taken, we need to create a promise for each annotation, and then when all the promises are resolved, take the screenshot
+  for (
+    let nodeArrayIndex = 0;
+    nodeArrayIndex < aggregatedNodes.length;
+    nodeArrayIndex++
+  ) {
+    const nodesArray = aggregatedNodes[nodeArrayIndex];
     let existingNodes = [];
+    let variableNames = [];
     for (let index = 0; index < nodesArray.length; index++) {
       const node = nodesArray[index];
       const nodeObj = figma.getNodeById(node.nodeId);
       const variableID = nodeObj.boundVariables["characters"].id;
       const variable = figma.variables.getVariableById(variableID);
       const variableName = variable.name;
+      if (!variableNames.includes(variableName)) {
+        variableNames.push(variableName);
+      }
       const rootNode = figma.getNodeById(node.rootNode);
       const rootNodeName = rootNode.name;
       const rootNodeID = rootNode.id;
-      const allNodes = nodesArray.filter((node) => {
-        if (node.rootNode === rootNodeID) {
-          return node;
-        }
-      }).map((node) => {
-        return figma.getNodeById(node.nodeId);
-      });
+      const allNodes = nodesArray
+        .filter((node) => {
+          if (node.rootNode === rootNodeID) {
+            return node;
+          }
+        })
+        .map((node) => {
+          return figma.getNodeById(node.nodeId);
+        });
       allNodes.forEach((node) => {
         existingNodes.push(node);
       });
@@ -473,7 +487,7 @@ function annotateNodesWithVariable(nodesArray) {
         })
         .filter((n) => {
           if (
-            n.getSharedPluginData("stringalong_annotation", "variableID") &&
+            n.getSharedPluginData("stringalong_annotation", "variableName") &&
             getRootNode(n.id) === rootNodeID
           ) {
             return n;
@@ -484,13 +498,44 @@ function annotateNodesWithVariable(nodesArray) {
           if (!existingNodes.includes(annotation)) {
             existingNodes.push(annotation);
           }
-          const annotationVariableID = annotation.getSharedPluginData(
-            "stringalong_annotation",
-            "variableID"
-          );
-          console.log(annotation.id + " already exists");
         });
         return;
+      }
+      // check if the wrapper frame already exists
+      const existingWrapper = figma.currentPage
+        .findAllWithCriteria({
+          types: ["FRAME"],
+        })
+        .filter((n) => {
+          if (
+            n.getSharedPluginData(
+              "stringalong_annotation_wrapper",
+              "rootNodeID"
+            ) === rootNodeID
+          ) {
+            return n;
+          }
+        });
+      let wrapperFame;
+      if (existingWrapper.length > 0) {
+        const wrapper = existingWrapper[0];
+        wrapperFame = wrapper.id;
+      } else {
+        // create a wrapper frame for the annoations, and place it where the root node is placed and size it to the root node
+        const wrapper = figma.createFrame();
+        wrapper.name = "stringalong_annotation_wrapper";
+        wrapper.x = rootNode.x;
+        wrapper.y = rootNode.y;
+        wrapper.resize(rootNode.width, rootNode.height);
+        wrapper.layoutMode = "NONE";
+        wrapper.expanded = false;
+        wrapper.fills = [];
+        wrapper.setSharedPluginData(
+          "stringalong_annotation_wrapper",
+          "rootNodeID",
+          rootNodeID
+        );
+        wrapperFame = wrapper.id;
       }
       // create a red stroked rectangle around the node
       const rect = figma.createRectangle();
@@ -506,8 +551,8 @@ function annotateNodesWithVariable(nodesArray) {
       rect.name = `${variableName} (${rootNodeName})`;
       rect.setSharedPluginData(
         "stringalong_annotation",
-        "variableID",
-        variableID
+        "variableName",
+        variableName
       );
       // create a text node with the variable name and place it on top of the rectangle, centered, with a white background, and a red border, and a line attaching the text node to the rectangle
       // figma.loadFontAsync({ family: "Inter", style: "Regular" })
@@ -577,9 +622,9 @@ function annotateNodesWithVariable(nodesArray) {
         textWrapper.x = textWrapperCoordinates.x;
         textWrapper.y = textWrapperCoordinates.y;
         textWrapper.setSharedPluginData(
-          "stringalong_annotation_textWrapper",
-          "variableID",
-          variableID
+          "stringalong_annotation",
+          "variableName",
+          variableName
         );
         // create a line connecting the text node to the rectangle
         const line = figma.createLine();
@@ -616,21 +661,16 @@ function annotateNodesWithVariable(nodesArray) {
         line.name = `${variableName} (${rootNodeName})`;
         line.setSharedPluginData(
           "stringalong_annotation",
-          "variableID",
-          variableID
+          "variableName",
+          variableName
         );
         // group the rectangle, text node, and line
         // TODO when the root node is auto-layout, the group is not placed in the correct position - the solution is to disable auto-layout on the root node, take the screenshot, then re-enable auto-layout on the root node with the same settings
         const group = figma.group(
           [rect, textWrapper, line],
-          figma.getNodeById(node.rootNode)
+          figma.getNodeById(wrapperFame)
         );
         group.name = `stringalong_annotation`;
-        group.setSharedPluginData(
-          "stringalong_annotation",
-          "variableID",
-          variableID
-        );
         group.expanded = false;
         group.setSharedPluginData(
           "stringalong_annotation",
@@ -640,34 +680,40 @@ function annotateNodesWithVariable(nodesArray) {
         if (!existingNodes.includes(group)) {
           existingNodes.push(group);
         }
-        // console.log(JSON.stringify(existingNodes, null, 2));
-        // put the group in the node's root parent and lock it
-        // group.parent = nodeObj.parent;
-        // group.locked = true;
+        // if it's the last node, wrap the wrapper frame and the rootNode in a group
+        if (index === nodesArray.length - 1) {
+          console.log("last node");
+          const wrapperFrame = figma.getNodeById(wrapperFame);
+          const rootNode = figma.getNodeById(node.rootNode);
+          const group = figma.group([wrapperFrame, rootNode], rootNode.parent);
+          group.name = variableNames.sort().join(" - ");
+          group.setSharedPluginData(
+            "stringalong_screenshot_group",
+            "rootNodeID",
+            rootNodeID
+          );
+          group.expanded = false;
+        }
       });
     }
-  });
+  }
+  exportRootNodeScreenshot();
 }
 
 function exportRootNodeScreenshot() {
-  const nodes = figma.currentPage
-    .findAllWithCriteria({
-      types: ["GROUP"],
-    })
-    .filter((node) => {
-      if (node.getSharedPluginData("stringalong_annotation", "variableID")) {
-        return node;
-      }
-    });
   let nodeScreenshots = [];
   let promises = [];
-  for (let index = 0; index < nodes.length; index++) {
-    const node = nodes[index];
+  const screenShotTargets = figma.currentPage.findChildren((n) =>
+    n.getSharedPluginData("stringalong_screenshot_group", "rootNodeID")
+  );
+  console.log(`Number of nodes to screenshot: ${screenShotTargets.length}`);
+  for (let index = 0; index < screenShotTargets.length; index++) {
+    const node = screenShotTargets[index];
     const nodeObj = figma.getNodeById(node.id);
     const rootNode = figma.getNodeById(getRootNode(node.id));
     const rootNodeName = rootNode.name;
     const variableID = nodeObj.getSharedPluginData(
-      "stringalong_annotation",
+      "stringalong_screenshot_group",
       "variableID"
     );
     const variable = figma.variables.getVariableById(variableID);
